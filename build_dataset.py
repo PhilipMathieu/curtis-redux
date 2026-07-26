@@ -3,6 +3,7 @@
 Row schema (spec §8 + arc):
   id, date, opp, park, ev, la, spray, bb, dist, apex, orig,
   fp {HR,3B,2B,1B,Out} (blended Fenway distribution), fmode,
+  pflip (park flip: modal outcome differs AND the fence is causally in play),
   hf (ball height at Fenway fence, null if lands short), fdist, fh, seg,
   pclear (Layer 1 overlay, null if short/low wall), arc [[x,y]*20], des, flags
 
@@ -50,6 +51,15 @@ def main() -> None:
         pred = predict_fenway(model, r.launch_speed, r.launch_angle, r.spray_deg)
         l1 = pred["layer1"]
         fp = pred["dist"]
+        fmode = max(fp, key=fp.get)
+        # A "park flip" requires Fenway's fence to be causally in play: the
+        # ball reaches the fence plane airborne, or is an airball dying
+        # within 40 ft of it. Without this, the flip list is dominated by
+        # luck-regression (infield singles whose modal outcome is "out"
+        # at every park), not by Fenway.
+        fence_in_play = l1["height_at_fence"] is not None or (
+            r.launch_angle >= 10 and l1["fence_dist"] - l1["carry"] <= 40
+        )
         opp = r.away_team if r.home_team == "WSH" else r.home_team
         rows.append({
             "id": int(i),
@@ -64,7 +74,8 @@ def main() -> None:
             "apex": round(l1["apex"]),
             "orig": r.outcome,
             "fp": fp,
-            "fmode": max(fp, key=fp.get),
+            "fmode": fmode,
+            "pflip": bool(fence_in_play and r.outcome != fmode),
             "hf": None if l1["height_at_fence"] is None else round(l1["height_at_fence"], 1),
             "fdist": round(l1["fence_dist"]),
             "fh": l1["fence_height"],
@@ -114,7 +125,7 @@ def main() -> None:
         "expected_fenway_hr": round(exp_hr, 1),
         "expected_fenway_hr_ci": [int(np.percentile(hr_draws, 2.5)), int(np.percentile(hr_draws, 97.5))],
         "wall_balls": sum(1 for row in rows if row["hf"] is not None and row["fp"]["HR"] < 0.5),
-        "flipped": sum(1 for row in rows if row["orig"] != row["fmode"]),
+        "flipped": sum(1 for row in rows if row["pflip"]),
         "actual_line": actual_counts,
         "expected_line": expected_line,
     }

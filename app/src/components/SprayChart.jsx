@@ -63,7 +63,7 @@ export default function SprayChart({ rows, sel, onSelect }) {
           const [x, y] = dotPos(row);
           const on = sel === row.id;
           const isOut = row.orig === "Out";
-          const flipped = row.orig !== row.fmode;
+          const flipped = row.pflip;
           return (
             <g
               key={row.id}

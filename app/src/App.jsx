@@ -51,7 +51,7 @@ export default function App() {
   const rows = useMemo(
     () =>
       ROWS.filter((r) => {
-        if (story === "flipped" && r.orig === r.fmode) return false;
+        if (story === "flipped" && !r.pflip) return false;
         if (story === "monster" && !(r.seg === "Green Monster" && r.hf != null)) return false;
         if (story === "hard" && r.ev < 95) return false;
         if (type !== "all" && r.bb !== type) return false;
