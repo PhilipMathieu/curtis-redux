@@ -1,0 +1,14 @@
+scratch/*
+.DS_Store
+
+# Python
+.venv/
+__pycache__/
+
+# Raw/intermediate data — final app/src/data.json is committed
+data/raw/
+*.parquet
+
+# Node
+node_modules/
+app/dist/

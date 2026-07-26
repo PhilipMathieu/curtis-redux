@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+/*
+  Design tokens mirrored from the blog:
+  portfolio-blog/astro-site/src/styles/global.css (@theme block).
+  Kept in sync by hand — if the blog palette changes, re-copy this block.
+*/
+@theme {
+  --color-gray-100: #F7F7F7;
+  --color-gray-200: #E5E5E5;
+  --color-gray-300: #CCCCCC;
+  --color-gray-500: #666666;
+  --color-gray-600: #4A4A4A;
+  --color-gray-800: #1A1A1A;
+
+  --color-primary-500: #CE112D;
+  --color-primary-600: #A00E24;
+  --color-primary-400: #E6394D;
+
+  --color-link-500: #1D9ACC;
+  --color-link-600: #1580b0;
+  --color-link-400: #4BB4E6;
+
+  /* Outcome palette — validated (dataviz six-checks) against #F7F7F7.
+     Out sits outside the categorical set: neutral de-emphasized context marks. */
+  --color-outcome-hr: #CE112D;   /* = primary-500, doubles as Fenway red */
+  --color-outcome-3b: #B8860B;
+  --color-outcome-2b: #157A4A;   /* Monster green */
+  --color-outcome-1b: #1580B0;   /* = link-600 */
+  --color-outcome-out: #CCCCCC;  /* gray-300 fill, gray-500 stroke */
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Newsreader", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+}
+
+body {
+  @apply font-sans m-0 bg-gray-100 text-gray-800 text-sm leading-normal break-words;
+}
+
+h1, h2, h3 {
+  @apply m-0 font-serif font-semibold text-gray-800;
+}
+
+a {
+  @apply text-link-500 no-underline;
+}
+a:hover {
+  @apply underline;
+}
