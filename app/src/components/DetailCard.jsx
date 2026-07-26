@@ -1,3 +1,4 @@
+import { COPY } from "../copy.js";
 import { OUTCOMES, OUTCOME_COLOR, OUTCOME_LABEL, TEAM_NAME } from "../lib/field.js";
 import WallSection from "./WallSection.jsx";
 
@@ -5,7 +6,7 @@ export default function DetailCard({ r }) {
   if (!r) {
     return (
       <div className="rounded border border-dashed border-gray-300 bg-white p-6 text-center text-gray-500">
-        Select any batted ball to run it into Fenway's walls.
+        {COPY.emptyCard}
       </div>
     );
   }
@@ -23,7 +24,7 @@ export default function DetailCard({ r }) {
         {/* actual result */}
         <div>
           <div className="mb-1 text-[11px] font-medium uppercase tracking-widest text-gray-500">
-            Actual result · {park}
+            {COPY.actualHeader(park)}
           </div>
           <div className="flex items-center gap-2">
             <span
@@ -41,7 +42,7 @@ export default function DetailCard({ r }) {
         {/* Fenway distribution */}
         <div>
           <div className="mb-1 text-[11px] font-medium uppercase tracking-widest text-gray-500">
-            Same ball at Fenway
+            {COPY.fenwayHeader}
           </div>
           <div className="flex flex-col gap-1" role="list" aria-label="Fenway outcome probabilities">
             {OUTCOMES.map((o) => (
@@ -62,10 +63,6 @@ export default function DetailCard({ r }) {
               </div>
             ))}
           </div>
-          <p className="mt-1.5 mb-0 text-[11px] leading-snug text-gray-500">
-            Of the 100 most similar balls real right-handed hitters put in play
-            at Fenway{r.hf != null && r.fh >= 10 ? ", blended with the physics of the wall" : ""}.
-          </p>
         </div>
       </div>
 

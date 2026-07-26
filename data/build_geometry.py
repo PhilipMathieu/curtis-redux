@@ -66,6 +66,33 @@ def main() -> None:
         for s, d in zip(sprays, dists)
     ]
 
+    # Drawing outline: corner-preserving simplification of the trace so the
+    # bullpen fence renders as the straight segments it actually is, rather
+    # than the resample's synthetic-looking smooth arc. Model lookups keep
+    # the 1-degree table above.
+    pts = [(np.sin(np.radians(s)) * d, np.cos(np.radians(s)) * d) for s, d in zip(sprays, dists)]
+
+    def rdp(points, eps):
+        if len(points) < 3:
+            return points
+        (x0, y0), (x1, y1) = points[0], points[-1]
+        dx, dy = x1 - x0, y1 - y0
+        norm = np.hypot(dx, dy) or 1e-9
+        dmax, imax = 0.0, 0
+        for i in range(1, len(points) - 1):
+            d = abs(dy * (points[i][0] - x0) - dx * (points[i][1] - y0)) / norm
+            if d > dmax:
+                dmax, imax = d, i
+        if dmax > eps:
+            return rdp(points[: imax + 1], eps)[:-1] + rdp(points[imax:], eps)
+        return [points[0], points[-1]]
+
+    outline_xy = rdp(pts, 2.5)
+    outline = [
+        [round(float(np.degrees(np.arctan2(x, y))), 2), round(float(np.hypot(x, y)), 1)]
+        for x, y in outline_xy
+    ]
+
     checks = {
         "lf_line_310": breakpoints[0][1],
         "monster_corner_-9deg": breakpoints[36][1],
@@ -78,6 +105,7 @@ def main() -> None:
         "park": "Fenway Park",
         "convention": "spray_deg: -45 = LF line, 0 = CF, +45 = RF line; dist ft; height ft",
         "breakpoints": breakpoints,
+        "outline": outline,
         "segments": [
             {"name": name, "from_deg": a0, "to_deg": a1, "height_ft": h}
             for a0, a1, h, name in HEIGHT_SEGMENTS

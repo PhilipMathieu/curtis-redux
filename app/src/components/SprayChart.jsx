@@ -1,14 +1,12 @@
 import { useState } from "react";
 import {
-  dotPos, fencePath, proj, OUTCOME_COLOR, HX, HY,
+  dotPos, fencePath, monsterPath, proj, OUTCOME_COLOR, HX, HY,
 } from "../lib/field.js";
-
-const MONSTER_END_IDX = 36; // breakpoint index of the -9deg corner
 
 export default function SprayChart({ rows, sel, onSelect }) {
   const [tip, setTip] = useState(null);
   const fence = fencePath();
-  const monster = fence.slice(0, MONSTER_END_IDX + 1);
+  const monster = monsterPath();
 
   const show = (row, evt) => {
     const box = evt.currentTarget.ownerSVGElement.getBoundingClientRect();

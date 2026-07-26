@@ -79,10 +79,28 @@ def main() -> None:
     rng = np.random.default_rng(42)
     probs = np.array([[row["fp"][o] for o in OUTCOMES] for row in rows])
     probs = probs / probs.sum(axis=1, keepdims=True)
-    hr_draws = np.array([
-        (np.array([rng.choice(len(OUTCOMES), p=p) for p in probs]) == 0).sum()
+    draws = np.array([
+        [(np.array([rng.choice(len(OUTCOMES), p=p) for p in probs]) == j).sum()
+         for j in range(len(OUTCOMES))]
         for _ in range(BOOTSTRAP_DRAWS)
-    ])
+    ])  # (draws, outcome)
+    hr_draws = draws[:, 0]
+
+    # actual vs expected-at-Fenway line on contact, with CIs per outcome
+    actual_counts = {o: sum(1 for row in rows if row["orig"] == o) for o in OUTCOMES}
+    expected_line = {
+        o: {
+            "mean": round(float(probs[:, j].sum()), 1),
+            "ci": [int(np.percentile(draws[:, j], 2.5)), int(np.percentile(draws[:, j], 97.5))],
+        }
+        for j, o in enumerate(OUTCOMES)
+    }
+    hit_draws = draws[:, :4].sum(axis=1)  # everything but Out
+    actual_counts["H"] = sum(actual_counts[o] for o in OUTCOMES if o != "Out")
+    expected_line["H"] = {
+        "mean": round(float(probs[:, :4].sum()), 1),
+        "ci": [int(np.percentile(hit_draws, 2.5)), int(np.percentile(hit_draws, 97.5))],
+    }
 
     exp_hr = float(probs[:, 0].sum())
     meta = {
@@ -97,6 +115,8 @@ def main() -> None:
         "expected_fenway_hr_ci": [int(np.percentile(hr_draws, 2.5)), int(np.percentile(hr_draws, 97.5))],
         "wall_balls": sum(1 for row in rows if row["hf"] is not None and row["fp"]["HR"] < 0.5),
         "flipped": sum(1 for row in rows if row["orig"] != row["fmode"]),
+        "actual_line": actual_counts,
+        "expected_line": expected_line,
     }
 
     OUT.write_text(json.dumps({"meta": meta, "rows": rows}, separators=(",", ":")))

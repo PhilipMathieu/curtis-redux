@@ -1,25 +1,16 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import data from "./data.json";
+import { COPY } from "./copy.js";
 import { OUTCOME_COLOR, OUTCOME_LABEL } from "./lib/field.js";
 import SprayChart from "./components/SprayChart.jsx";
 import DetailCard from "./components/DetailCard.jsx";
+import StatLine from "./components/StatLine.jsx";
 
 const { meta, rows: ROWS } = data;
 const EMBED = new URLSearchParams(window.location.search).get("embed") === "1";
 
-const STORY_FILTERS = [
-  ["all", "All balls"],
-  ["flipped", "Outcome flips"],
-  ["monster", "Off the Monster"],
-  ["hard", "95+ mph"],
-];
-const TYPE_FILTERS = [
-  ["all", "All types"],
-  ["ground_ball", "Grounders"],
-  ["line_drive", "Liners"],
-  ["fly_ball", "Flies"],
-  ["popup", "Popups"],
-];
+const STORY_FILTERS = ["all", "flipped", "monster", "hard"];
+const TYPE_FILTERS = ["all", "ground_ball", "line_drive", "fly_ball", "popup"];
 
 function Chip({ on, children, onClick }) {
   return (
@@ -72,10 +63,10 @@ export default function App() {
   const selRow = sel != null ? ROWS[sel] : null;
 
   const stats = [
-    ["HR, actual parks", meta.actual_hr],
-    ["Expected HR, Fenway", `${meta.expected_fenway_hr}`, `95% CI ${meta.expected_fenway_hr_ci[0]}–${meta.expected_fenway_hr_ci[1]}`],
-    ["Balls off the walls", meta.wall_balls],
-    ["Outcomes flipped", meta.flipped],
+    [COPY.stats.actualHr, meta.actual_hr],
+    [COPY.stats.expectedHr, `${meta.expected_fenway_hr}`, `95% CI ${meta.expected_fenway_hr_ci[0]}–${meta.expected_fenway_hr_ci[1]}`],
+    [COPY.stats.wallBalls, meta.wall_balls],
+    [COPY.stats.flipped, meta.flipped],
   ];
 
   return (
@@ -84,16 +75,12 @@ export default function App() {
         {!EMBED && (
           <header className="mb-5 border-b-2 border-gray-200 pb-4">
             <div className="text-xs font-semibold uppercase tracking-[0.22em] text-primary-500">
-              Traded to Boston · July 25, 2026
+              {COPY.kicker}
             </div>
             <h1 className="mt-1 text-4xl">
-              Curtis Mead <span className="font-normal text-gray-500">at</span> Fenway Park
+              {COPY.titleName} <span className="font-normal text-gray-500">{COPY.titleJoin}</span> {COPY.titlePark}
             </h1>
-            <p className="mt-2 mb-0 text-gray-600">
-              Every ball he put in play this season, re-fenced. Select a dot to
-              see what actually happened — and what the same ball probably does
-              against Fenway's walls, including the 37-foot Green Monster.
-            </p>
+            <p className="mt-2 mb-0 text-gray-600">{COPY.dek}</p>
           </header>
         )}
 
@@ -110,12 +97,14 @@ export default function App() {
 
         {/* filters */}
         <div className="mb-2 flex flex-wrap gap-1.5">
-          {STORY_FILTERS.map(([k, l]) => (
-            <Chip key={k} on={story === k} onClick={() => setStory(k)}>{l}</Chip>
+          {STORY_FILTERS.map((k) => (
+            <Chip key={k} on={story === k} onClick={() => setStory(k)}>{COPY.filters[k]}</Chip>
           ))}
           <span className="mx-1 hidden border-l border-gray-300 sm:inline" aria-hidden="true" />
-          {TYPE_FILTERS.map(([k, l]) => (
-            <Chip key={k} on={type === k} onClick={() => setType(k)}>{l}</Chip>
+          {TYPE_FILTERS.map((k) => (
+            <Chip key={k} on={type === k} onClick={() => setType(k)}>
+              {k === "all" ? COPY.filters.allTypes : COPY.filters[k]}
+            </Chip>
           ))}
         </div>
 
@@ -134,33 +123,27 @@ export default function App() {
           ))}
           <span className="flex items-center gap-1.5">
             <span className="inline-block h-3 w-3 rounded-full border border-gray-800 opacity-60" />
-            outcome flips at Fenway
+            {COPY.legendFlips}
           </span>
           <span className="ml-auto font-mono text-[10px] text-gray-500">
-            {rows.length} of {ROWS.length} balls shown
+            {COPY.ballsShown(rows.length, ROWS.length)}
           </span>
         </div>
 
         <DetailCard r={selRow} />
 
+        <div className="mt-4">
+          <StatLine meta={meta} />
+        </div>
+
         {!EMBED ? (
           <footer className="mt-5 border-t border-gray-200 pt-3 text-[11px] leading-relaxed text-gray-500">
-            <p className="mb-1">
-              Statcast through {meta.vintage} · {meta.n_bbe} batted balls ({meta.no_track_excluded} untracked
-              excluded) · fielder's-choice and error outcomes counted as outs.
-            </p>
-            <p className="mb-0">
-              Fenway outcomes blend the 100 most similar right-handed batted balls at Fenway
-              (2021–2026 Statcast) with a drag-and-lift trajectory model fit to Mead's own home
-              runs. Batted-ball spin and per-pitch wind aren't public; the ±band on the wall
-              reflects that. Coordinates and fence geometry validated against published park
-              dimensions.
-            </p>
+            <p className="mb-0">{COPY.footnote(meta.vintage, meta.n_bbe, meta.no_track_excluded)}</p>
           </footer>
         ) : (
           <div className="mt-2 text-right text-[11px]">
             <a href={window.location.pathname} target="_blank" rel="noopener">
-              Open full screen ↗
+              {COPY.openFull}
             </a>
           </div>
         )}

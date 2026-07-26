@@ -4,6 +4,7 @@
 import geometry from "../geometry.json";
 
 export const BREAKPOINTS = geometry.breakpoints; // [spray, dist, height][]
+export const OUTLINE = geometry.outline; // corner-preserving [spray, dist][] for drawing
 export const SEGMENTS = geometry.segments;
 
 export function fenceAt(spray) {
@@ -36,7 +37,12 @@ export function proj(spray, d) {
 }
 
 export function fencePath(inflateFt = 0) {
-  return BREAKPOINTS.map(([a, d]) => proj(a, d + inflateFt));
+  return OUTLINE.map(([a, d]) => proj(a, d + inflateFt));
+}
+
+export function monsterPath() {
+  // the Monster band: outline vertices through the -9.4deg corner
+  return OUTLINE.filter(([a]) => a <= -9.3).map(([a, d]) => proj(a, d));
 }
 
 // display position: wall balls pinned at the fence, HRs land beyond it

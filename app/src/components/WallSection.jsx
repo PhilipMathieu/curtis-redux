@@ -1,3 +1,4 @@
+import { COPY } from "../copy.js";
 import { wallSigma } from "../lib/field.js";
 
 // Side view at the ball's spray angle: the REAL integrated trajectory arc
@@ -18,7 +19,7 @@ export default function WallSection({ r }) {
   return (
     <div>
       <div className="mb-1 text-[11px] font-medium uppercase tracking-widest text-gray-500">
-        Side view at {Math.abs(r.spray)}° {r.spray < 0 ? "LF" : "RF"} — {r.seg}, {fh} ft wall at {fd} ft
+        {COPY.sideView(Math.abs(r.spray), r.spray < 0 ? "LF" : "RF", r.seg, fh, fd)}
       </div>
       <svg viewBox={`0 0 ${W} ${H + 16}`} className="w-full rounded bg-white border border-gray-200">
         {/* ground */}
@@ -46,12 +47,12 @@ export default function WallSection({ r }) {
               x={X(fd) - 9} y={Y(r.hf) - 8}
               fill="#1A1A1A" fontSize="10" fontFamily="ui-monospace, monospace" textAnchor="end"
             >
-              {r.hf} ft at the wall{r.pclear != null ? ` · clears ${Math.round(r.pclear * 100)}%` : ""}
+              {COPY.atWall(r.hf, r.pclear != null ? Math.round(r.pclear * 100) : null)}
             </text>
           </>
         ) : (
           <text x={X(Math.min(carry, xMax - 30))} y={Y(0) - 6} fill="#666666" fontSize="10" fontFamily="ui-monospace, monospace" textAnchor="middle">
-            lands {Math.max(fd - carry, 0).toFixed(0)} ft short
+            {COPY.landsShort(Math.max(fd - carry, 0).toFixed(0))}
           </text>
         )}
         <text x="4" y={H + 12} fill="#666666" fontSize="9" fontFamily="ui-monospace, monospace">0 ft</text>
