@@ -10,8 +10,7 @@ import TransitionMatrix from "./components/TransitionMatrix.jsx";
 const { meta, rows: ROWS } = data;
 const EMBED = new URLSearchParams(window.location.search).get("embed") === "1";
 
-const STORY_FILTERS = ["all", "flipped", "monster", "hard"];
-const TYPE_FILTERS = ["all", "ground_ball", "line_drive", "fly_ball", "popup"];
+const STORY_FILTERS = ["all", "flipped", "monster"];
 
 function Chip({ on, children, onClick }) {
   return (
@@ -32,7 +31,6 @@ function Chip({ on, children, onClick }) {
 export default function App() {
   const [sel, setSel] = useState(null);
   const [story, setStory] = useState("all");
-  const [type, setType] = useState("all");
   const rootRef = useRef(null);
 
   // iframe embed: report rendered height to the parent page
@@ -54,11 +52,9 @@ export default function App() {
       ROWS.filter((r) => {
         if (story === "flipped" && !r.pflip) return false;
         if (story === "monster" && !(r.seg === "Green Monster" && r.hf != null)) return false;
-        if (story === "hard" && r.ev < 95) return false;
-        if (type !== "all" && r.bb !== type) return false;
         return true;
       }),
-    [story, type],
+    [story],
   );
 
   // look up by id (not index) and drop the selection if filters hide it
@@ -108,12 +104,6 @@ export default function App() {
         <div className="mb-2 flex flex-wrap gap-1.5">
           {STORY_FILTERS.map((k) => (
             <Chip key={k} on={story === k} onClick={() => setStory(k)}>{COPY.filters[k]}</Chip>
-          ))}
-          <span className="mx-1 hidden border-l border-gray-300 sm:inline" aria-hidden="true" />
-          {TYPE_FILTERS.map((k) => (
-            <Chip key={k} on={type === k} onClick={() => setType(k)}>
-              {k === "all" ? COPY.filters.allTypes : COPY.filters[k]}
-            </Chip>
           ))}
         </div>
 

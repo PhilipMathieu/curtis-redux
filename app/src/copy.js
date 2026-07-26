@@ -19,12 +19,6 @@ export const COPY = {
     all: "All balls",
     flipped: "Outcome flips",
     monster: "Off the Monster",
-    hard: "95+ mph",
-    allTypes: "All types",
-    ground_ball: "Grounders",
-    line_drive: "Liners",
-    fly_ball: "Flies",
-    popup: "Popups",
   },
 
   legendFlips: "likely different result at Fenway",
@@ -50,6 +44,18 @@ export const COPY = {
   matrixCaption:
     "Each row shows where the balls with that actual outcome would likely wind up at Fenway. " +
     "Right edge: actual counts. Bottom edge: the expected line if those same balls were hit at Fenway.",
+  // hover sentence: nouns as [singular, plural]; sentence takes the
+  // pre-joined outcome list ("11.3 home runs, 2.8 doubles and 1.4 outs")
+  matrixNouns: {
+    HR: ["home run", "home runs"],
+    "3B": ["triple", "triples"],
+    "2B": ["double", "doubles"],
+    "1B": ["single", "singles"],
+    Out: ["out", "outs"],
+  },
+  matrixRowSentence: (n, noun, outcomes) =>
+    `The ${n} ${noun} could have resulted in ${outcomes} at Fenway, given their trajectory.`,
+  matrixRowHint: "Hover a row for the plain-English version.",
 
   openFull: "Open full screen ↗",
 
