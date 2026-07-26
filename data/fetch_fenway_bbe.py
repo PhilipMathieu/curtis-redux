@@ -15,6 +15,7 @@ Writes:
 from __future__ import annotations
 
 import sys
+import time
 from pathlib import Path
 
 import pandas as pd
@@ -56,7 +57,18 @@ def main() -> None:
                 continue
             start, end = month_bounds(year, month)
             print(f"fetching BOS {start}..{end}")
-            df = statcast(start_dt=start, end_dt=end, team="BOS")
+            # Savant throttles occasionally surface as malformed CSV mid-pull;
+            # back off and retry rather than dying with 5 seasons half-cached.
+            for attempt in range(4):
+                try:
+                    df = statcast(start_dt=start, end_dt=end, team="BOS")
+                    break
+                except Exception as e:  # noqa: BLE001 - parser/HTTP errors alike
+                    if attempt == 3:
+                        raise
+                    wait = 30 * (attempt + 1)
+                    print(f"  attempt {attempt + 1} failed ({type(e).__name__}: {e}); retrying in {wait}s")
+                    time.sleep(wait)
             df.to_parquet(path)
             chunks.append(df)
             print(f"  {len(df)} pitches -> {path.name}")
