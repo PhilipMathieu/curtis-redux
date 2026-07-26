@@ -43,6 +43,13 @@ export const COPY = {
   lineNeutral: "Any park",
   lineFenway: "At Fenway",
 
+  matrixTitle: "Where the outcomes go",
+  matrixCorner: "Actual ↓ · Fenway →",
+  matrixTotal: "Total",
+  matrixCaption:
+    "Each row spreads the balls with that actual result across their expected Fenway outcomes. " +
+    "Right edge: actual counts. Bottom edge: the expected Fenway line.",
+
   openFull: "Open full screen ↗",
 
   footnote: (vintage, n, excluded) =>

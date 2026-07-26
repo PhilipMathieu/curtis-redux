@@ -5,6 +5,7 @@ import { OUTCOME_COLOR, OUTCOME_LABEL } from "./lib/field.js";
 import SprayChart from "./components/SprayChart.jsx";
 import DetailCard from "./components/DetailCard.jsx";
 import StatLine from "./components/StatLine.jsx";
+import TransitionMatrix from "./components/TransitionMatrix.jsx";
 
 const { meta, rows: ROWS } = data;
 const EMBED = new URLSearchParams(window.location.search).get("embed") === "1";
@@ -68,7 +69,7 @@ export default function App() {
     [COPY.stats.neutralHr, `${meta.neutral_line.HR.mean}`, `95% CI ${meta.neutral_line.HR.ci[0]}–${meta.neutral_line.HR.ci[1]}`],
     [COPY.stats.expectedHr, `${meta.expected_fenway_hr}`, `95% CI ${meta.expected_fenway_hr_ci[0]}–${meta.expected_fenway_hr_ci[1]}`],
     [COPY.stats.parkHits, `${parkHits > 0 ? "+" : ""}${parkHits.toFixed(1)}`],
-  ];
+  ]; // [label, value, hoverDetail?]
 
   return (
     <div ref={rootRef} className={EMBED ? "py-2" : "py-8"}>
@@ -87,11 +88,14 @@ export default function App() {
 
         {/* summary strip */}
         <div className="mb-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
-          {stats.map(([label, value, sub]) => (
-            <div key={label} className="rounded border border-gray-200 bg-white px-2 py-2 text-center shadow-sm">
+          {stats.map(([label, value, hover]) => (
+            <div
+              key={label}
+              className="rounded border border-gray-200 bg-white px-2 py-2 text-center shadow-sm"
+              title={hover}
+            >
               <div className="font-mono text-2xl font-semibold text-gray-800">{value}</div>
               <div className="text-[10px] font-medium uppercase tracking-wider text-gray-500">{label}</div>
-              {sub && <div className="text-[10px] font-mono text-gray-500">{sub}</div>}
             </div>
           ))}
         </div>
@@ -135,6 +139,10 @@ export default function App() {
 
         <div className="mt-4">
           <StatLine meta={meta} />
+        </div>
+
+        <div className="mt-4">
+          <TransitionMatrix rows={ROWS} />
         </div>
 
         {!EMBED ? (

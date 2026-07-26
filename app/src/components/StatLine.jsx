@@ -23,7 +23,6 @@ export default function StatLine({ meta }) {
             <th className="py-1 text-right font-medium">{COPY.lineActual}</th>
             <th className="py-1 text-right font-medium">{COPY.lineNeutral}</th>
             <th className="py-1 text-right font-medium">{COPY.lineFenway}</th>
-            <th className="hidden py-1 text-right font-normal text-gray-500 sm:table-cell">95% CI</th>
           </tr>
         </thead>
         <tbody>
@@ -31,6 +30,7 @@ export default function StatLine({ meta }) {
             const exp = meta.expected_line[key];
             const neu = meta.neutral_line[key];
             const act = meta.actual_line[key];
+            const luck = neu.mean - act; // actual vs contact quality
             const delta = exp.mean - neu.mean; // the park effect, luck removed
             return (
               <tr key={key} className="border-t border-gray-100">
@@ -46,15 +46,23 @@ export default function StatLine({ meta }) {
                   {label}
                 </td>
                 <td className="py-1.5 text-right font-mono text-gray-800">{act}</td>
-                <td className="py-1.5 text-right font-mono text-gray-600">{neu.mean}</td>
-                <td className="py-1.5 text-right font-mono text-gray-800">
+                <td
+                  className="py-1.5 text-right font-mono text-gray-600"
+                  title={`95% CI ${neu.ci[0]}–${neu.ci[1]}`}
+                >
+                  {neu.mean}
+                  <span className={`ml-1 text-[10px] ${luck >= 0.5 ? "text-outcome-2b" : luck <= -0.5 ? "text-primary-500" : "text-gray-500"}`}>
+                    {luck > 0 ? `+${luck.toFixed(1)}` : luck.toFixed(1)}
+                  </span>
+                </td>
+                <td
+                  className="py-1.5 text-right font-mono text-gray-800"
+                  title={`95% CI ${exp.ci[0]}–${exp.ci[1]}`}
+                >
                   {exp.mean}
                   <span className={`ml-1 text-[10px] ${delta >= 0.5 ? "text-outcome-2b" : delta <= -0.5 ? "text-primary-500" : "text-gray-500"}`}>
                     {delta > 0 ? `+${delta.toFixed(1)}` : delta.toFixed(1)}
                   </span>
-                </td>
-                <td className="hidden py-1.5 text-right font-mono text-gray-500 sm:table-cell">
-                  {exp.ci[0]}–{exp.ci[1]}
                 </td>
               </tr>
             );
