@@ -22,7 +22,7 @@ him from Washington.
 - `app/` — Vite + React + Tailwind 4. All user-facing prose is in
   `app/src/copy.js`.
 
-Rebuild data: `uv run python data/fetch_mead.py && uv run python data/fetch_fenway_bbe.py && uv run python data/build_geometry.py && uv run python build_dataset.py`
+Rebuild data: `uv run python data/fetch_mead.py && uv run python data/fetch_fenway_bbe.py && uv run python data/fetch_neutral_bbe.py && uv run python data/build_geometry.py && uv run python build_dataset.py`
 
 ## Embedding in a blog post
 
