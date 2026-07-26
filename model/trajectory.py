@@ -1,9 +1,10 @@
 """Batted-ball trajectory model, ported from the prototype (scratch/pipeline.py).
 
-2D point mass with quadratic drag + effective backspin lift, grid-tuned to
-empirical carry anchors (100 mph / 27 deg -> ~390 ft; 105/30 -> ~420;
-110/28 -> ~445). Lift components are the perpendicular rotation of the
-velocity vector: (-KL*s*vy, +KL*s*vx).
+2D point mass with quadratic drag + effective backspin lift; constants refit
+on Mead's own tracked home runs (see KD/KL note below). With the refit
+values the reference carries are 100 mph / 27 deg -> ~385 ft; 105/30 ->
+~414; 110/28 -> ~436. Lift components are the perpendicular rotation of
+the velocity vector: (-KL*s*vy, +KL*s*vx).
 """
 
 from __future__ import annotations
@@ -67,6 +68,6 @@ def arc_points(xs: list[float], ys: list[float], n: int = 20) -> list[list[float
 
 
 if __name__ == "__main__":
-    for ev, la, expect in [(100, 27, 390), (105, 30, 420), (110, 28, 445)]:
+    for ev, la, expect in [(100, 27, 385), (105, 30, 414), (110, 28, 436)]:
         c, a, t, xs, ys = trajectory(ev, la)
-        print(f"EV {ev} LA {la}: carry {c:.0f} ft (anchor ~{expect}), apex {a:.0f}, hang {t:.1f}s")
+        print(f"EV {ev} LA {la}: carry {c:.0f} ft (refit ref ~{expect}), apex {a:.0f}, hang {t:.1f}s")

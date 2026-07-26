@@ -10,10 +10,17 @@ export default function SprayChart({ rows, sel, onSelect }) {
 
   const show = (row, evt) => {
     const box = evt.currentTarget.ownerSVGElement.getBoundingClientRect();
+    // keyboard focus has no pointer coords — anchor to the dot itself
+    const dot = evt.clientX
+      ? { x: evt.clientX, y: evt.clientY }
+      : (() => {
+          const b = evt.currentTarget.getBoundingClientRect();
+          return { x: b.x + b.width / 2, y: b.y + b.height / 2 };
+        })();
     setTip({
       row,
-      x: ((evt.clientX - box.left) / box.width) * 100,
-      y: ((evt.clientY - box.top) / box.height) * 100,
+      x: ((dot.x - box.left) / box.width) * 100,
+      y: ((dot.y - box.top) / box.height) * 100,
     });
   };
 
@@ -80,7 +87,7 @@ export default function SprayChart({ rows, sel, onSelect }) {
               }}
               onMouseEnter={(e) => show(row, e)}
               onMouseLeave={() => setTip(null)}
-              onFocus={(e) => show(row, { currentTarget: e.currentTarget, clientX: 0, clientY: 0 })}
+              onFocus={(e) => show(row, { currentTarget: e.currentTarget, clientX: 0 })}
               onBlur={() => setTip(null)}
             >
               {flipped && (
@@ -98,12 +105,12 @@ export default function SprayChart({ rows, sel, onSelect }) {
           );
         })}
       </svg>
-      {tip && tip.x > 0 && (
+      {tip && (
         <div
           className="pointer-events-none absolute z-10 max-w-56 rounded border border-gray-200 bg-white px-2.5 py-1.5 text-xs shadow-sm"
           style={{
-            left: `${Math.min(tip.x, 70)}%`,
-            top: `${tip.y}%`,
+            left: `${Math.min(Math.max(tip.x, 2), 70)}%`,
+            top: `${Math.max(tip.y, 14)}%`,
             transform: "translate(8px, -110%)",
           }}
         >

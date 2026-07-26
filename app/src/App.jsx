@@ -61,13 +61,17 @@ export default function App() {
     [story, type],
   );
 
-  const selRow = sel != null ? ROWS[sel] : null;
+  // look up by id (not index) and drop the selection if filters hide it
+  const selRow = sel != null ? rows.find((r) => r.id === sel) ?? null : null;
+  useEffect(() => {
+    if (sel != null && !rows.some((r) => r.id === sel)) setSel(null);
+  }, [rows, sel]);
 
   const parkHits = meta.expected_line.H.mean - meta.neutral_line.H.mean;
   const stats = [
     [COPY.stats.actualHr, meta.actual_hr],
-    [COPY.stats.neutralHr, `${meta.neutral_line.HR.mean}`, `95% CI ${meta.neutral_line.HR.ci[0]}–${meta.neutral_line.HR.ci[1]}`],
-    [COPY.stats.expectedHr, `${meta.expected_fenway_hr}`, `95% CI ${meta.expected_fenway_hr_ci[0]}–${meta.expected_fenway_hr_ci[1]}`],
+    [COPY.stats.neutralHr, `${meta.neutral_line.HR.mean}`, COPY.rangeHover(meta.neutral_line.HR.ci)],
+    [COPY.stats.expectedHr, `${meta.expected_fenway_hr}`, COPY.rangeHover(meta.expected_fenway_hr_ci)],
     [COPY.stats.parkHits, `${parkHits > 0 ? "+" : ""}${parkHits.toFixed(1)}`],
   ]; // [label, value, hoverDetail?]
 

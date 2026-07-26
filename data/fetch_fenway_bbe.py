@@ -21,7 +21,7 @@ from pathlib import Path
 import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from statcast_common import KEEP_COLS, clean_bbe
+from statcast_common import KEEP_COLS, MEAD_MLBAM_ID, clean_bbe
 
 RAW_DIR = Path(__file__).resolve().parent / "raw"
 CHUNK_DIR = RAW_DIR / "fenway"
@@ -77,7 +77,11 @@ def main() -> None:
     fenway = raw[raw["home_team"] == "BOS"]
     print(f"total pitches: {len(raw)}, at Fenway: {len(fenway)}")
 
-    bbe, counts = clean_bbe(fenway)
+    # regular season + playoffs are at Fenway; spring "BOS home" games are
+    # at JetBlue Park. Exclude Mead so predicted balls aren't own-neighbors.
+    bbe, counts = clean_bbe(
+        fenway, game_types=("R", "F", "D", "L", "W"), exclude_batters=(MEAD_MLBAM_ID,)
+    )
     bbe = bbe[KEEP_COLS].reset_index(drop=True)
     out_path = RAW_DIR / "fenway_bbe.parquet"
     bbe.to_parquet(out_path)

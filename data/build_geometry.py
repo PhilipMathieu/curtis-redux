@@ -7,9 +7,9 @@ spray breakpoints, with the Pesky Pole knot (45deg, 302 ft) appended since the
 traced outline cuts the sharply curved RF corner.
 
 Heights: piecewise by segment. The Monster's angular span was validated
-against its documented 231-ft length: pole (310 ft @ -45deg) to a corner at
--9.4deg gives a 223-ft wall (matches); the prototype's -19.5deg corner gives
-166 ft (doesn't). Seamheads lists 37/18/9/5/3 at its five fixed markers; its
+against its documented 231-ft length: the traced polyline from the pole
+(310 ft @ -45deg) to the -9.4deg corner measures ~225 ft (consistent);
+the prototype's -19.5deg corner gives 166 ft (isn't). Seamheads lists 37/18/9/5/3 at its five fixed markers; its
 LC=18 and CF=9 disagree with the documented Monster span and the 17-ft CF
 wall, so heights here follow the standard published values and the outline's
 kinks, with Seamheads as corroboration for LF/RC/RF.
@@ -58,8 +58,12 @@ def main() -> None:
 
     sprays = np.arange(-45.0, 45.0 + 0.001, 1.0)
     dists = np.interp(sprays, oo.spray, oo.d)
-    # traced outline cuts the RF corner; force the pole knot
+    # traced outline cuts both sharp corners; force the known knots.
+    # The Triangle is a literal corner (420 marker) the smooth trace rounds
+    # to ~414 — same class of error as the Pesky corner.
     dists[-1] = PESKY_POLE[1]
+    tri = int(np.argmax(dists))
+    dists[tri] = 420.0
 
     breakpoints = [
         [round(float(s), 1), round(float(d), 1), height_at(float(s))]

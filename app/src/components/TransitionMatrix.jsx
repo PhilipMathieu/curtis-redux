@@ -19,7 +19,7 @@ export default function TransitionMatrix({ rows }) {
   );
   const max = Math.max(...OUTCOMES.flatMap((i) => OUTCOMES.map((j) => matrix[i][j])));
 
-  const fmt = (v) => (v === 0 ? "–" : v < 0.05 ? "0" : v.toFixed(1));
+  const fmt = (v) => (v < 0.05 ? "–" : v.toFixed(1));
   const shade = (v) => `rgba(21, 122, 74, ${(0.32 * Math.sqrt(v / max)).toFixed(3)})`;
 
   return (

@@ -42,7 +42,13 @@ def display_distance(r: pd.Series) -> float:
 
 
 def main() -> None:
-    mead = pd.read_parquet(RAW / "mead_2026_bbe.parquet").sort_values("game_date").reset_index(drop=True)
+    # stable sort with tiebreakers so row ids are deterministic across rebuilds
+    mead = (
+        pd.read_parquet(RAW / "mead_2026_bbe.parquet")
+        .sort_values(["game_date", "launch_speed", "launch_angle", "spray_deg"], kind="mergesort")
+        .reset_index(drop=True)
+    )
+    fetch_counts = json.loads((RAW / "mead_counts.json").read_text())
     fenway = pd.read_parquet(RAW / "fenway_bbe.parquet")
     neutral = pd.read_parquet(RAW / "neutral_bbe.parquet")
     model = FenwayOutcomeModel().fit(fenway)
@@ -148,7 +154,7 @@ def main() -> None:
         "season": 2026,
         "vintage": max(row["date"] for row in rows),
         "n_bbe": len(rows),
-        "no_track_excluded": 3,
+        "no_track_excluded": fetch_counts["no_track"],
         "actual_hr": sum(1 for row in rows if row["orig"] == "HR"),
         "expected_fenway_hr": round(exp_hr, 1),
         "expected_fenway_hr_ci": [int(np.percentile(hr_draws, 2.5)), int(np.percentile(hr_draws, 97.5))],

@@ -10,15 +10,24 @@ export const SEGMENTS = geometry.segments;
 export function fenceAt(spray) {
   const bps = BREAKPOINTS;
   const s = Math.max(bps[0][0], Math.min(bps[bps.length - 1][0], spray));
-  for (let i = 1; i < bps.length; i++) {
-    const [a0, d0, h0] = bps[i - 1];
-    const [a1, d1, h1] = bps[i];
-    if (s >= a0 && s <= a1) {
-      const f = (s - a0) / Math.max(a1 - a0, 1e-9);
-      return [d0 + f * (d1 - d0), f < 0.5 ? h0 : h1];
+  // height from the segment table so boundaries match segment names exactly
+  // (mirrors model/fence.py)
+  let height = SEGMENTS[SEGMENTS.length - 1].height_ft;
+  for (const seg of SEGMENTS) {
+    if (s >= seg.from_deg && s <= seg.to_deg) {
+      height = seg.height_ft;
+      break;
     }
   }
-  return [bps[bps.length - 1][1], bps[bps.length - 1][2]];
+  for (let i = 1; i < bps.length; i++) {
+    const [a0, d0] = bps[i - 1];
+    const [a1, d1] = bps[i];
+    if (s >= a0 && s <= a1) {
+      const f = (s - a0) / Math.max(a1 - a0, 1e-9);
+      return [d0 + f * (d1 - d0), height];
+    }
+  }
+  return [bps[bps.length - 1][1], height];
 }
 
 export function wallSigma(seg) {
@@ -41,8 +50,12 @@ export function fencePath(inflateFt = 0) {
 }
 
 export function monsterPath() {
-  // the Monster band: outline vertices through the -9.4deg corner
-  return OUTLINE.filter(([a]) => a <= -9.3).map(([a, d]) => proj(a, d));
+  // the Monster band: outline vertices up to the corner, plus the exact
+  // -9.4deg corner point (the simplified outline's next vertex overshoots it)
+  const corner = SEGMENTS[0].to_deg;
+  const pts = OUTLINE.filter(([a]) => a < corner).map(([a, d]) => proj(a, d));
+  pts.push(proj(corner, fenceAt(corner)[0]));
+  return pts;
 }
 
 // display position: wall balls pinned at the fence, HRs land beyond it

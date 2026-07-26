@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import json
 import sys
 from pathlib import Path
 
@@ -47,6 +48,8 @@ def main() -> None:
     bbe = bbe[KEEP_COLS].reset_index(drop=True)
     out_path = RAW_DIR / "mead_2026_bbe.parquet"
     bbe.to_parquet(out_path)
+    # build_dataset.py reads these for the UI footnote — never hardcode them
+    (RAW_DIR / "mead_counts.json").write_text(json.dumps(counts))
 
     print(f"wrote {len(bbe)} BBE -> {out_path}")
     print("exclusions:", counts)

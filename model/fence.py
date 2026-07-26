@@ -16,16 +16,27 @@ def _load():
 
 
 def fence_at(spray: float) -> tuple[float, float]:
-    """(fence distance ft, wall height ft) at a spray angle, linear in distance."""
-    bps, _ = _load()
+    """(fence distance ft, wall height ft) at a spray angle.
+
+    Distance interpolates the 1-degree table; height comes from the segment
+    table so its boundaries (e.g. the Monster corner at -9.4deg) match
+    segment_name/wall_sigma exactly, rather than snapping to breakpoint
+    midpoints half a degree away.
+    """
+    bps, segments = _load()
     s = max(bps[0][0], min(bps[-1][0], spray))
+    height = segments[-1]["height_ft"]
+    for seg in segments:
+        if seg["from_deg"] <= s <= seg["to_deg"]:
+            height = seg["height_ft"]
+            break
     for i in range(1, len(bps)):
-        a0, d0, h0 = bps[i - 1]
-        a1, d1, h1 = bps[i]
+        a0, d0, _h0 = bps[i - 1]
+        a1, d1, _h1 = bps[i]
         if a0 <= s <= a1:
             f = (s - a0) / max(a1 - a0, 1e-9)
-            return d0 + f * (d1 - d0), h0 if f < 0.5 else h1
-    return bps[-1][1], bps[-1][2]
+            return d0 + f * (d1 - d0), height
+    return bps[-1][1], height
 
 
 def segment_name(spray: float) -> str:

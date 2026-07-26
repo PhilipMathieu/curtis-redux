@@ -49,8 +49,20 @@ def map_events(events: pd.Series) -> pd.Series:
     return events.map(EVENT_MAP).fillna("Out")
 
 
-def clean_bbe(df: pd.DataFrame) -> tuple[pd.DataFrame, dict]:
+def clean_bbe(
+    df: pd.DataFrame,
+    game_types: tuple[str, ...] = ("R",),
+    exclude_batters: tuple[int, ...] = (),
+) -> tuple[pd.DataFrame, dict]:
     """Filter a raw Statcast frame to usable batted-ball events.
+
+    game_types defaults to regular season only — spring-training rows carry
+    the parent club's team codes but were played at spring venues, which
+    poisons park attribution. Fenway pulls pass ("R","F","D","L","W") since
+    playoff games are legitimately at Fenway.
+
+    exclude_batters drops specific hitters from model training pools so a
+    predicted ball can never be its own nearest neighbor.
 
     Returns (bbe, counts) where counts records what was excluded so the UI
     footnote can be honest about it.
@@ -58,6 +70,18 @@ def clean_bbe(df: pd.DataFrame) -> tuple[pd.DataFrame, dict]:
     counts = {"raw_rows": len(df)}
 
     bbe = df[df["type"] == "X"].copy()
+    counts["bbe_all_game_types"] = len(bbe)
+
+    if "game_type" in bbe.columns:
+        non_regular = ~bbe["game_type"].isin(game_types)
+        counts["dropped_game_type"] = int(non_regular.sum())
+        bbe = bbe[~non_regular]
+
+    if exclude_batters and "batter" in bbe.columns:
+        excluded = bbe["batter"].isin(exclude_batters)
+        counts["dropped_excluded_batters"] = int(excluded.sum())
+        bbe = bbe[~excluded]
+
     counts["bbe_total"] = len(bbe)
 
     dropped_bunts = bbe["events"].isin(DROP_EVENTS)

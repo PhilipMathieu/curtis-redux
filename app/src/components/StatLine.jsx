@@ -48,7 +48,7 @@ export default function StatLine({ meta }) {
                 <td className="py-1.5 text-right font-mono text-gray-800">{act}</td>
                 <td
                   className="py-1.5 text-right font-mono text-gray-600"
-                  title={`95% CI ${neu.ci[0]}–${neu.ci[1]}`}
+                  title={COPY.rangeHover(neu.ci)}
                 >
                   {neu.mean}
                   <span className={`ml-1 text-[10px] ${luck >= 0.5 ? "text-outcome-2b" : luck <= -0.5 ? "text-primary-500" : "text-gray-500"}`}>
@@ -57,7 +57,7 @@ export default function StatLine({ meta }) {
                 </td>
                 <td
                   className="py-1.5 text-right font-mono text-gray-800"
-                  title={`95% CI ${exp.ci[0]}–${exp.ci[1]}`}
+                  title={COPY.rangeHover(exp.ci)}
                 >
                   {exp.mean}
                   <span className={`ml-1 text-[10px] ${delta >= 0.5 ? "text-outcome-2b" : delta <= -0.5 ? "text-primary-500" : "text-gray-500"}`}>

@@ -27,7 +27,8 @@ export const COPY = {
     popup: "Popups",
   },
 
-  legendFlips: "outcome flips at Fenway",
+  legendFlips: "likely different result at Fenway",
+  rangeHover: (ci) => `${ci[0]}–${ci[1]} across 1,000 season replays`,
   ballsShown: (shown, total) => `${shown} of ${total} balls shown`,
 
   emptyCard: "Select a batted ball.",
