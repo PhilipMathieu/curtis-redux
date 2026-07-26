@@ -19,8 +19,9 @@ export default function StatLine({ meta }) {
       <table className="w-full text-xs">
         <thead>
           <tr className="text-left text-gray-500">
-            <th className="w-1/3 py-1 font-medium" />
+            <th className="w-1/4 py-1 font-medium" />
             <th className="py-1 text-right font-medium">{COPY.lineActual}</th>
+            <th className="py-1 text-right font-medium">{COPY.lineNeutral}</th>
             <th className="py-1 text-right font-medium">{COPY.lineFenway}</th>
             <th className="hidden py-1 text-right font-normal text-gray-500 sm:table-cell">95% CI</th>
           </tr>
@@ -28,8 +29,9 @@ export default function StatLine({ meta }) {
         <tbody>
           {ROWS.map(([key, label]) => {
             const exp = meta.expected_line[key];
+            const neu = meta.neutral_line[key];
             const act = meta.actual_line[key];
-            const delta = exp.mean - act;
+            const delta = exp.mean - neu.mean; // the park effect, luck removed
             return (
               <tr key={key} className="border-t border-gray-100">
                 <td className="flex items-center gap-1.5 py-1.5 text-gray-600">
@@ -44,6 +46,7 @@ export default function StatLine({ meta }) {
                   {label}
                 </td>
                 <td className="py-1.5 text-right font-mono text-gray-800">{act}</td>
+                <td className="py-1.5 text-right font-mono text-gray-600">{neu.mean}</td>
                 <td className="py-1.5 text-right font-mono text-gray-800">
                   {exp.mean}
                   <span className={`ml-1 text-[10px] ${delta >= 0.5 ? "text-outcome-2b" : delta <= -0.5 ? "text-primary-500" : "text-gray-500"}`}>

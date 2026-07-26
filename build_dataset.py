@@ -44,11 +44,18 @@ def display_distance(r: pd.Series) -> float:
 def main() -> None:
     mead = pd.read_parquet(RAW / "mead_2026_bbe.parquet").sort_values("game_date").reset_index(drop=True)
     fenway = pd.read_parquet(RAW / "fenway_bbe.parquet")
+    neutral = pd.read_parquet(RAW / "neutral_bbe.parquet")
     model = FenwayOutcomeModel().fit(fenway)
+    # park-neutral baseline (same KNN, league-wide sample): separates his
+    # 2026 batted-ball luck from what Fenway itself does
+    neu_model = FenwayOutcomeModel().fit(neutral)
 
     rows = []
+    neutral_probs_rows = []
     for i, r in mead.iterrows():
         pred = predict_fenway(model, r.launch_speed, r.launch_angle, r.spray_deg)
+        np_dist = neu_model.predict_dist(r.launch_speed, r.launch_angle, r.spray_deg)
+        neutral_probs_rows.append([np_dist[o] for o in OUTCOMES])
         l1 = pred["layer1"]
         fp = pred["dist"]
         fmode = max(fp, key=fp.get)
@@ -113,6 +120,27 @@ def main() -> None:
         "ci": [int(np.percentile(hit_draws, 2.5)), int(np.percentile(hit_draws, 97.5))],
     }
 
+    # park-neutral expected line (same bootstrap treatment)
+    nprobs = np.array(neutral_probs_rows)
+    nprobs = nprobs / nprobs.sum(axis=1, keepdims=True)
+    ndraws = np.array([
+        [(np.array([rng.choice(len(OUTCOMES), p=p) for p in nprobs]) == j).sum()
+         for j in range(len(OUTCOMES))]
+        for _ in range(BOOTSTRAP_DRAWS)
+    ])
+    neutral_line = {
+        o: {
+            "mean": round(float(nprobs[:, j].sum()), 1),
+            "ci": [int(np.percentile(ndraws[:, j], 2.5)), int(np.percentile(ndraws[:, j], 97.5))],
+        }
+        for j, o in enumerate(OUTCOMES)
+    }
+    nhit_draws = ndraws[:, :4].sum(axis=1)
+    neutral_line["H"] = {
+        "mean": round(float(nprobs[:, :4].sum()), 1),
+        "ci": [int(np.percentile(nhit_draws, 2.5)), int(np.percentile(nhit_draws, 97.5))],
+    }
+
     exp_hr = float(probs[:, 0].sum())
     meta = {
         "player": "Curtis Mead",
@@ -128,6 +156,7 @@ def main() -> None:
         "flipped": sum(1 for row in rows if row["pflip"]),
         "actual_line": actual_counts,
         "expected_line": expected_line,
+        "neutral_line": neutral_line,
     }
 
     OUT.write_text(json.dumps({"meta": meta, "rows": rows}, separators=(",", ":")))

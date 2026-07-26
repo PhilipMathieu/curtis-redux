@@ -62,11 +62,12 @@ export default function App() {
 
   const selRow = sel != null ? ROWS[sel] : null;
 
+  const parkHits = meta.expected_line.H.mean - meta.neutral_line.H.mean;
   const stats = [
     [COPY.stats.actualHr, meta.actual_hr],
+    [COPY.stats.neutralHr, `${meta.neutral_line.HR.mean}`, `95% CI ${meta.neutral_line.HR.ci[0]}–${meta.neutral_line.HR.ci[1]}`],
     [COPY.stats.expectedHr, `${meta.expected_fenway_hr}`, `95% CI ${meta.expected_fenway_hr_ci[0]}–${meta.expected_fenway_hr_ci[1]}`],
-    [COPY.stats.wallBalls, meta.wall_balls],
-    [COPY.stats.flipped, meta.flipped],
+    [COPY.stats.parkHits, `${parkHits > 0 ? "+" : ""}${parkHits.toFixed(1)}`],
   ];
 
   return (

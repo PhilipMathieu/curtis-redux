@@ -10,9 +10,9 @@ export const COPY = {
 
   stats: {
     actualHr: "HR, actual parks",
+    neutralHr: "Expected HR, any park",
     expectedHr: "Expected HR, Fenway",
-    wallBalls: "Balls off the walls",
-    flipped: "Outcomes flipped",
+    parkHits: "Hits, Fenway effect",
   },
 
   filters: {
@@ -40,6 +40,7 @@ export const COPY = {
 
   lineTitle: "2026 on contact",
   lineActual: "Actual",
+  lineNeutral: "Any park",
   lineFenway: "At Fenway",
 
   openFull: "Open full screen ↗",
@@ -48,6 +49,8 @@ export const COPY = {
     `Statcast through ${vintage} · ${n} batted balls (${excluded} untracked excluded; ` +
     `fielder's choices and errors counted as outs). Fenway probabilities: the 100 most ` +
     `similar right-handed batted balls at Fenway since 2021, blended with a trajectory ` +
-    `model fit to Mead's own home runs. Spin and wind aren't public — the ± band on the ` +
-    `wall stands in for them.`,
+    `model fit to Mead's own home runs. "Any park" is the same model over a league-wide ` +
+    `sample across all 30 parks — the gap between it and his actual line is batted-ball ` +
+    `luck; the gap between it and the Fenway line is the park. Spin and wind aren't ` +
+    `public — the ± band on the wall stands in for them.`,
 };
