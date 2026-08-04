@@ -36,25 +36,53 @@ def slugs() -> list[str]:
     return [p["slug"] for p in load_roster()]
 
 
+SEARCH_URL = "https://baseballsavant.mlb.com/player/search-all"
+
+
+def lookup_ids(player: dict) -> list[int]:
+    """Active-MLB MLBAM ids matching a roster entry's name, via Savant.
+
+    Savant rather than the Chadwick register: it is the same host the
+    batted balls come from, so a run that can fetch data can also resolve
+    names, and namesakes are filtered by is_player/mlb/last_year rather
+    than by hand.
+    """
+    import requests
+
+    name = f"{player['lookup']['first']} {player['lookup']['last']}"
+    hits = requests.get(SEARCH_URL, params={"search": name}, timeout=30).json()
+    return sorted({
+        int(h["id"]) for h in hits
+        if h.get("is_player") == 1 and h.get("mlb") == 1
+        and str(h.get("name", "")).lower() == name.lower()
+        and int(h.get("last_year") or 0) >= 2025
+    })
+
+
 def resolve_mlbam(player: dict) -> int:
     """MLBAM id for a roster entry, resolving by name when it isn't pinned.
 
-    A pinned id is verified against the Chadwick register rather than
-    trusted: fetching the wrong hitter's batted balls would be invisible
-    downstream, so a mismatch is a hard error.
+    A pinned id is verified rather than trusted: fetching the wrong hitter's
+    batted balls would be invisible downstream, so a mismatch is a hard
+    error. A lookup that can't be reached is not — a pinned id still stands
+    on its own.
     """
     pinned = player.get("mlbam")
-    lookup = player.get("lookup")
-    if pinned is not None and not lookup:
+    if not player.get("lookup"):
+        if pinned is None:
+            raise SystemExit(f"{player['name']}: needs either mlbam or lookup in data/roster.json")
         return int(pinned)
 
-    from pybaseball import playerid_lookup
+    try:
+        ids = lookup_ids(player)
+    except Exception as e:  # noqa: BLE001 — network/parse alike
+        if pinned is not None:
+            print(f"  WARNING: id lookup unavailable ({type(e).__name__}); using pinned {pinned}")
+            return int(pinned)
+        raise SystemExit(
+            f"{player['name']}: id lookup failed ({e}) and no mlbam pinned in data/roster.json"
+        ) from e
 
-    hits = playerid_lookup(lookup["last"], lookup["first"], fuzzy=False)
-    hits = hits[hits["key_mlbam"].notna()]
-    if "mlb_played_last" in hits.columns:  # drop long-retired namesakes
-        hits = hits[hits["mlb_played_last"] >= 2024]
-    ids = sorted({int(v) for v in hits["key_mlbam"]})
     if not ids:
         raise SystemExit(f"no MLBAM id found for {player['name']} — pin one in data/roster.json")
     if pinned is not None:
