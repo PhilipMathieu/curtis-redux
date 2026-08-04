@@ -1,0 +1,83 @@
+name: Rebuild batted-ball data
+
+# Runs the Statcast pipeline where Savant is reachable and commits the
+# resulting app/src/players/*.json back to the branch it ran on. Manual only:
+# the pulls are heavy (a month-by-month Fenway sweep plus six league-wide
+# months), so the raw parquet is cached between runs and only the small JSON
+# is committed.
+
+on:
+  workflow_dispatch:
+    inputs:
+      player:
+        description: "Roster slug to rebuild (blank = every hitter in data/roster.json)"
+        required: false
+        default: ""
+      end:
+        description: "Last game date to include, YYYY-MM-DD (blank = today)"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+concurrency:
+  group: data-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+
+      - name: Cache Statcast pulls
+        uses: actions/cache@v4
+        with:
+          path: data/raw
+          key: statcast-raw-${{ hashFiles('data/fetch_fenway_bbe.py', 'data/fetch_neutral_bbe.py', 'data/roster.json') }}-${{ github.run_id }}
+          restore-keys: |
+            statcast-raw-${{ hashFiles('data/fetch_fenway_bbe.py', 'data/fetch_neutral_bbe.py', 'data/roster.json') }}-
+            statcast-raw-
+
+      - name: Fetch hitters
+        run: >
+          uv run python data/fetch_players.py
+          ${{ inputs.player && format('--player {0}', inputs.player) || '' }}
+          ${{ inputs.end && format('--end {0}', inputs.end) || '' }}
+
+      - name: Fetch Fenway comparison pool
+        run: uv run python data/fetch_fenway_bbe.py
+
+      - name: Fetch park-neutral comparison pool
+        run: uv run python data/fetch_neutral_bbe.py
+
+      # data/geometry/fenway.json is committed and its source CSV
+      # (GeomMLBStadiums) is fetched by hand — see data/build_geometry.py.
+
+      - name: Build dataset
+        run: >
+          uv run python build_dataset.py
+          ${{ inputs.player && format('--player {0}', inputs.player) || '' }}
+
+      - name: Validate
+        run: uv run python model/validate.py
+
+      - name: Commit data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add app/src/players app/src/roster.json app/src/geometry.json
+          if git diff --cached --quiet; then
+            echo "no data changes"
+          else
+            git commit -m "Rebuild batted-ball data (${{ inputs.player || 'all players' }})"
+            git push origin HEAD:${{ github.ref_name }}
+          fi

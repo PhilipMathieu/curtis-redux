@@ -1,0 +1,73 @@
+{
+  "_comment": [
+    "Boston's 2026 trade-deadline position-player pickups — the single source",
+    "of truth for both the Python pipeline and the app. build_dataset.py copies",
+    "this file to app/src/roster.json; the app renders one page per entry.",
+    "Prose templates live in app/src/copy.js — the fields here are facts.",
+    "",
+    "Fields:",
+    "  slug        URL key (?player=<slug>) and data filename",
+    "  mlbam       MLBAM id; null = resolve by name at fetch time (a pinned id",
+    "              is cross-checked against the lookup and fails loudly on a",
+    "              mismatch, so a typo can never silently fetch another hitter)",
+    "  bats        R / L / S — picks the same-handed Fenway comparison pool",
+    "  acquired    fills 'Traded to Boston {acquired}, {trade_date}'",
+    "  kd, kl      trajectory drag/lift constants; omit to refit on the",
+    "              player's own tracked 2026 home runs (needs >= 10 of them)",
+    "",
+    "Erik Miller (LHP) and Carlos Gutierrez (MiLB OF) are deliberately absent:",
+    "no MLB batted balls to translate."
+  ],
+  "players": [
+    {
+      "slug": "mead",
+      "name": "Curtis Mead",
+      "short": "Mead",
+      "mlbam": 678554,
+      "lookup": { "first": "Curtis", "last": "Mead" },
+      "pos": "3B",
+      "bats": "R",
+      "from_team": "WSH",
+      "acquired": "from Washington for Connelly Early",
+      "trade_date": "July 25, 2026",
+      "kd": 0.0019,
+      "kl": 0.00088
+    },
+    {
+      "slug": "rutschman",
+      "name": "Adley Rutschman",
+      "short": "Rutschman",
+      "mlbam": null,
+      "lookup": { "first": "Adley", "last": "Rutschman" },
+      "pos": "C",
+      "bats": "S",
+      "from_team": "BAL",
+      "acquired": "from Baltimore for three prospects, Carlos Narváez and a player to be named",
+      "trade_date": "August 3, 2026"
+    },
+    {
+      "slug": "rogers",
+      "name": "Jake Rogers",
+      "short": "Rogers",
+      "mlbam": null,
+      "lookup": { "first": "Jake", "last": "Rogers" },
+      "pos": "C",
+      "bats": "R",
+      "from_team": "BAL",
+      "acquired": "from Baltimore in the Adley Rutschman deal",
+      "trade_date": "August 3, 2026"
+    },
+    {
+      "slug": "white",
+      "name": "Eli White",
+      "short": "White",
+      "mlbam": null,
+      "lookup": { "first": "Eli", "last": "White" },
+      "pos": "OF",
+      "bats": "R",
+      "from_team": "ATL",
+      "acquired": "from Atlanta for Tyler Uberstine",
+      "trade_date": "August 3, 2026"
+    }
+  ]
+}

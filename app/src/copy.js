@@ -1,12 +1,29 @@
 // All user-facing prose lives here — edit freely, nothing else references
-// these strings. {vintage}, {n} etc. are filled in by the components.
+// these strings. Player facts ({name}, trade line, handedness) come from
+// data/roster.json and the per-player meta; the sentences are here.
+
+const HAND = { R: "right-handed", L: "left-handed", S: "switch-hitting" };
+const SIDE = { R: "right-handed", L: "left-handed" };
 
 export const COPY = {
-  kicker: "Traded to Boston for Connelly Early, July 25, 2026",
-  titleName: "Curtis Mead",
+  siteTitle: "Boston's 2026 deadline pickups at Fenway Park",
+  navLabel: "Deadline pickups",
+  navHint: "Every hitter Boston added at the 2026 trade deadline, re-fenced at Fenway.",
+  navPending: "data pending",
+
+  kicker: (p) => `Traded to Boston ${p.acquired}, ${p.trade_date}`,
+  titleName: (p) => p.name,
   titleJoin: "at",
   titlePark: "Fenway Park",
-  dek: "Modeling park effect for every ball put in play in 2026 and projecting Green Monster effects.",
+  dek: (p) =>
+    `Modeling park effect for every ball the ${HAND[p.bats]} ${p.pos} put in play in 2026, ` +
+    `and projecting Green Monster effects.`,
+  pageTitle: (p) => `${p.name} at Fenway Park — every batted ball, re-fenced`,
+
+  loading: (p) => `Loading ${p.name}'s batted balls…`,
+  noData: (p) =>
+    `No batted-ball file for ${p.name} yet. Run "uv run python data/fetch_players.py ` +
+    `--player ${p.slug} && uv run python build_dataset.py --player ${p.slug}" to build this page.`,
 
   stats: {
     actualHr: "HR, actual",
@@ -19,6 +36,8 @@ export const COPY = {
     all: "All balls",
     flipped: "Outcome flips",
     monster: "Off the Monster",
+    L: "Batting lefty",
+    R: "Batting righty",
   },
 
   legendFlips: "likely different result at Fenway",
@@ -28,6 +47,7 @@ export const COPY = {
   emptyCard: "Select a batted ball.",
   actualHeader: (park) => `Actual · ${park}`,
   fenwayHeader: "At Fenway",
+  standNote: (stand) => `batting ${stand === "L" ? "lefty" : "righty"}`,
   sideView: (angle, side, seg, wall, dist) =>
     `Side view at ${angle}° ${side} — ${seg}, ${wall} ft wall at ${dist} ft`,
   landsShort: (ft) => `lands ${ft} ft short`,
@@ -59,13 +79,34 @@ export const COPY = {
 
   openFull: "Open full screen ↗",
 
-  footnote: (vintage, n, excluded) =>
-    `Statcast through ${vintage}, ${n} batted balls (${excluded} untracked excluded; ` +
-    `fielder's choices and errors counted as outs). Fenway probabilities: the 100 most ` +
-    `similar right-handed batted balls at Fenway since 2021, blended with a trajectory ` +
-    `model fit to Mead's own home runs. "Generic park" is the same model over a league-wide ` +
-    `sample across all 30 parks — the gap between it and his actual line is batted-ball ` +
-    `luck; the gap between it and the Fenway line is the park effect. This is a somewhat ` +
-    `simplified model, not accounting for spin or weather conditions, so it should be ` +
-    `interpreted only as a ballpark estimate (see what I did there).`,
+  // The comparison pool is same-handed, so a switch hitter gets both pools —
+  // his pull side changes with the side he swings from, and at Fenway that
+  // is the whole ballgame.
+  poolPhrase: (meta) => {
+    const hands = Object.keys(meta.hands ?? { [meta.bats]: meta.n_bbe });
+    return hands.length > 1
+      ? "the 100 most similar batted balls at Fenway since 2021 from the side he swung from"
+      : `the 100 most similar ${SIDE[hands[0]] ?? "right-handed"} batted balls at Fenway since 2021`;
+  },
+  fitPhrase: (meta, short) =>
+    meta.fit?.source === "own"
+      ? `a trajectory model refit on ${short}'s own ${meta.fit.n_hr} tracked 2026 home runs` +
+        (meta.fit.mae_ft != null ? ` (carry MAE ${meta.fit.mae_ft} ft)` : "")
+      : meta.fit?.source === "default"
+        ? "a trajectory model whose drag and lift constants come from Curtis Mead's 2026 home runs — " +
+          "too few tracked home runs here to refit them"
+        : `a trajectory model fit to ${short}'s own home runs`,
+
+  footnote: (meta, short) =>
+    `Statcast through ${meta.vintage}, ${meta.n_bbe} batted balls (${meta.no_track_excluded} untracked ` +
+    `excluded; fielder's choices and errors counted as outs). Fenway probabilities: ` +
+    `${COPY.poolPhrase(meta)}, blended with ${COPY.fitPhrase(meta, short)}. ` +
+    `"Generic park" is the same model over a league-wide sample across all 30 parks — the gap ` +
+    `between it and his actual line is batted-ball luck; the gap between it and the Fenway line ` +
+    `is the park effect. This is a somewhat simplified model, not accounting for spin or weather ` +
+    `conditions, so it should be interpreted only as a ballpark estimate (see what I did there).`,
+
+  thinSample: (n) =>
+    `Only ${n} tracked batted balls — every number on this page carries a wide interval. ` +
+    `Read the ranges, not the point estimates.`,
 };

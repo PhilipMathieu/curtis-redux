@@ -2,7 +2,7 @@ import { COPY } from "../copy.js";
 import { OUTCOMES, OUTCOME_COLOR, OUTCOME_LABEL, TEAM_NAME } from "../lib/field.js";
 import WallSection from "./WallSection.jsx";
 
-export default function DetailCard({ r }) {
+export default function DetailCard({ r, switchHitter = false }) {
   if (!r) {
     return (
       <div className="rounded border border-dashed border-gray-300 bg-white p-6 text-center text-gray-500">
@@ -17,7 +17,10 @@ export default function DetailCard({ r }) {
         <div className="font-mono text-xs text-gray-600">
           {r.date} · {r.ev} mph · {r.la}° launch · {r.dist} ft
         </div>
-        <div className="text-xs text-gray-500">{r.seg}</div>
+        <div className="text-xs text-gray-500">
+          {switchHitter && r.stand ? `${COPY.standNote(r.stand)} · ` : ""}
+          {r.seg}
+        </div>
       </div>
 
       <div className="mb-4 grid gap-4 sm:grid-cols-2">

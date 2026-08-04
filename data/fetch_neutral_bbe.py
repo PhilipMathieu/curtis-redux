@@ -20,7 +20,8 @@ from pathlib import Path
 import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from statcast_common import KEEP_COLS, MEAD_MLBAM_ID, clean_bbe
+from roster import roster_ids
+from statcast_common import KEEP_COLS, clean_bbe
 
 RAW_DIR = Path(__file__).resolve().parent / "raw"
 CHUNK_DIR = RAW_DIR / "neutral"
@@ -63,7 +64,7 @@ def main() -> None:
         print(f"  {len(df)} pitches -> {path.name}")
 
     raw = pd.concat(chunks, ignore_index=True)
-    bbe, counts = clean_bbe(raw, exclude_batters=(MEAD_MLBAM_ID,))
+    bbe, counts = clean_bbe(raw, exclude_batters=roster_ids())
     bbe = bbe[KEEP_COLS].reset_index(drop=True)
     out_path = RAW_DIR / "neutral_bbe.parquet"
     bbe.to_parquet(out_path)

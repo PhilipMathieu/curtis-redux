@@ -84,6 +84,7 @@ export const OUTCOME_LABEL = {
   Out: "Out",
 };
 
+// All 30, since the pages now cover hitters who played all over the league.
 export const TEAM_NAME = {
   WSH: "Nationals Park", ATH: "Sutter Health Park", SF: "Oracle Park",
   PIT: "PNC Park", BAL: "Camden Yards", MIL: "American Family Field",
@@ -91,5 +92,8 @@ export const TEAM_NAME = {
   CWS: "Rate Field", BOS: "Fenway Park", TB: "George M. Steinbrenner Field",
   NYM: "Citi Field", COL: "Coors Field", PHI: "Citizens Bank Park",
   MIA: "loanDepot park", TEX: "Globe Life Field", LAA: "Angel Stadium",
-  SD: "Petco Park", CIN: "Great American Ball Park",
+  SD: "Petco Park", CIN: "Great American Ball Park", CHC: "Wrigley Field",
+  DET: "Comerica Park", HOU: "Daikin Park", KC: "Kauffman Stadium",
+  LAD: "Dodger Stadium", MIN: "Target Field", NYY: "Yankee Stadium",
+  SEA: "T-Mobile Park", STL: "Busch Stadium", TOR: "Rogers Centre",
 };
