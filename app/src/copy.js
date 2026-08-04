@@ -94,7 +94,11 @@ export const COPY = {
         (meta.fit.mae_ft != null ? ` (carry MAE ${meta.fit.mae_ft} ft)` : "")
       : meta.fit?.source === "default"
         ? "a trajectory model whose drag and lift constants come from Curtis Mead's 2026 home runs — " +
-          "too few tracked home runs here to refit them"
+          `too few tracked home runs here to refit them` +
+          (meta.fit.mae_ft != null
+            ? ` (against ${short}'s ${meta.fit.n_hr}, those constants carry ${meta.fit.mae_ft} ft off on average, ` +
+              `${meta.fit.bias_ft > 0 ? "long" : "short"})`
+            : "")
         : `a trajectory model fit to ${short}'s own home runs`,
 
   footnote: (meta, short) =>

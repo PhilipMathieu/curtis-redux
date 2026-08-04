@@ -27,7 +27,7 @@ from trajectory import trajectory
 
 sys.path.insert(0, str(HERE.parent / "data"))
 sys.path.insert(0, str(HERE.parent))
-from roster import load_roster  # noqa: E402
+from roster import MIN_HR_FOR_REFIT, load_roster  # noqa: E402
 from build_dataset import drag_lift  # noqa: E402 — same KD/KL precedence as the build
 
 RAW = HERE.parent / "data" / "raw"
@@ -108,12 +108,17 @@ def check_hr_reconciliation(bbe: pd.DataFrame, fenway: pd.DataFrame,
         l1 = pred["layer1"]
         exp_hr += pred["dist"]["HR"]
         knn_exp_hr += pred["layer2"]["HR"]
-        # hand count: unambiguous physics clears over tall walls only — over
-        # the 3-5 ft fences "clearing the plane" is catchable, not a HR.
+        # Hand count: what the physics alone calls a home run. Over a tall
+        # wall that is "crossed the plane above it". Over the 3-5 ft fences
+        # crossing the plane is catchable, so it takes landing well beyond
+        # them — which is where a lefty's pull-side home runs live, and
+        # counting only tall walls made this check RHB-shaped.
+        tall = l1["fence_height"] >= 10.0
         clears = (
             l1["height_at_fence"] is not None
-            and l1["fence_height"] >= 10.0
             and l1["height_at_fence"] > l1["fence_height"]
+            if tall
+            else r.launch_angle >= 10 and l1["carry"] >= l1["fence_dist"] + 10
         )
         if clears:
             hand_count += 1
@@ -125,7 +130,7 @@ def check_hr_reconciliation(bbe: pd.DataFrame, fenway: pd.DataFrame,
     return {
         "expected_fenway_hr_blended": round(exp_hr, 1),
         "expected_fenway_hr_knn_only": round(knn_exp_hr, 1),
-        "physics_hand_count_tall_walls": hand_count,
+        "physics_hand_count": hand_count,
         "actual_hr": int((bbe.outcome == "HR").sum()),
         "actual_hr_clearing_fenway": actual_hr_still_hr,
         "tall_wall_fence_reaching": len(d),
@@ -148,7 +153,15 @@ def validate_player(player: dict, fenway: pd.DataFrame, plot_dir: Path | None) -
     print(f"=== 1. Physics anchors ({player['short']} HRs) ===")
     anchors = check_physics_anchors(bbe, kd, kl)
     print(anchors)
-    status = "PASS" if anchors["mae_ft"] < 15 else "FAIL — refit KD/KL"
+    if anchors["mae_ft"] < 15:
+        status = "PASS"
+    elif fit["source"] == "own":
+        status = "FAIL — refit KD/KL"
+    else:
+        # nothing to refit on: a handful of home runs sends the grid search to
+        # its boundary, which is fitting noise, not drag. The page says so.
+        status = (f"WEAK — borrowed constants carry {anchors['bias_ft']:+.0f} ft off; "
+                  f"only {anchors['n_hr']} tracked HRs, need {MIN_HR_FOR_REFIT} to refit")
     print(f"MAE {anchors['mae_ft']:.1f} ft -> {status}\n")
 
     for stand in sorted(bbe["stand"].unique()):
@@ -159,8 +172,8 @@ def validate_player(player: dict, fenway: pd.DataFrame, plot_dir: Path | None) -
     print("=== 3+4. HR reconciliation & layer divergence ===")
     rec = check_hr_reconciliation(bbe, fenway, kd, kl)
     print(rec)
-    gap = abs(rec["expected_fenway_hr_blended"] - rec["physics_hand_count_tall_walls"])
-    print(f"blended expected vs tall-wall hand count gap: {gap:.1f} -> "
+    gap = abs(rec["expected_fenway_hr_blended"] - rec["physics_hand_count"])
+    print(f"blended expected vs physics hand count gap: {gap:.1f} -> "
           f"{'PASS' if gap <= 3 else 'REVIEW'}\n")
 
 

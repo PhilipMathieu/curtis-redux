@@ -172,7 +172,9 @@ export default function App() {
               ))}
             </div>
 
-            {meta.n_bbe < 60 && (
+            {/* part-time bats: Rogers at 67 batted balls and White at 102 carry
+                intervals wide enough that the point estimates mislead on their own */}
+            {meta.n_bbe < 120 && (
               <p className="mb-4 rounded border border-gray-200 bg-white px-3 py-2 text-[11px] leading-snug text-gray-600">
                 {COPY.thinSample(meta.n_bbe)}
               </p>
