@@ -2,7 +2,8 @@ name: Deploy app to GitHub Pages
 
 # Simplified from rc-analysis-202607's deploy-pages.yml: no PR previews,
 # no draft gating — but with a Node build step since this app uses Vite.
-# app/src/data.json is committed, so the build needs no Python or network.
+# app/src/players/*.json are committed, so the build needs no Python or
+# network; the data.yml workflow is what regenerates them.
 
 on:
   push:

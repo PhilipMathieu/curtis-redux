@@ -1,8 +1,11 @@
 """Two-layer Fenway outcome model (spec §5).
 
 Layer 2 (primary): empirical KNN over real Fenway batted balls — "of the
-k=100 most similar balls hit at Fenway by RHB, what happened?" Learns
-Monster caroms, Triangle triples, and shallow-RF doubles from data.
+k=100 most similar balls hit at Fenway by a hitter batting from this side,
+what happened?" Learns Monster caroms, Triangle triples, and shallow-RF
+doubles from data. The pool is same-handed because pull side is the whole
+story at Fenway: an RHB's pull side is the Monster, a LHB's is the Pesky
+Pole, and mixing them would average two different parks together.
 
 Layer 1 (overlay): physics P(clear) from the trajectory model and wall
 height, with per-segment sigma. Shown in the cross-section viz and used as
@@ -22,30 +25,37 @@ from sklearn.preprocessing import StandardScaler
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from fence import fence_at, wall_sigma
-from trajectory import height_at, trajectory
+from trajectory import KD, KL, height_at, trajectory
 
 OUTCOMES = ["HR", "3B", "2B", "1B", "Out"]
 K = 100
 
 
 class FenwayOutcomeModel:
-    """KNN in standardized (EV, LA, spray) space over RHB Fenway BBE."""
+    """KNN in standardized (EV, LA, spray) space over same-handed Fenway BBE."""
 
-    def __init__(self, k: int = K):
+    def __init__(self, k: int = K, stand: str = "R"):
         self.k = k
+        self.stand = stand
         self.scaler = StandardScaler()
         self.nn = NearestNeighbors(n_neighbors=k)
         self.outcomes: np.ndarray | None = None
+        self.n_train = 0
 
     @staticmethod
     def features(df: pd.DataFrame) -> np.ndarray:
         return df[["launch_speed", "launch_angle", "spray_deg"]].to_numpy()
 
     def fit(self, fenway_bbe: pd.DataFrame) -> "FenwayOutcomeModel":
-        rhb = fenway_bbe[fenway_bbe["stand"] == "R"].reset_index(drop=True)
-        X = self.scaler.fit_transform(self.features(rhb))
+        pool = fenway_bbe[fenway_bbe["stand"] == self.stand].reset_index(drop=True)
+        if len(pool) < self.k:
+            raise ValueError(
+                f"{len(pool)} {self.stand}HB batted balls in the pool, need >= k={self.k}"
+            )
+        X = self.scaler.fit_transform(self.features(pool))
         self.nn.fit(X)
-        self.outcomes = rhb["outcome"].to_numpy()
+        self.outcomes = pool["outcome"].to_numpy()
+        self.n_train = len(pool)
         return self
 
     def predict_dist(self, ev: float, la: float, spray: float) -> dict[str, float]:
@@ -55,7 +65,10 @@ class FenwayOutcomeModel:
         return {o: round(float((neigh == o).mean()), 3) for o in OUTCOMES}
 
 
-def predict_fenway(model: FenwayOutcomeModel, ev: float, la: float, spray: float) -> dict:
+def predict_fenway(
+    model: FenwayOutcomeModel, ev: float, la: float, spray: float,
+    kd: float = KD, kl: float = KL,
+) -> dict:
     """Blended Fenway outcome distribution.
 
     Layer 2 (empirical KNN) is primary. Over TALL walls (Monster, CF — where
@@ -68,7 +81,7 @@ def predict_fenway(model: FenwayOutcomeModel, ev: float, la: float, spray: float
     empirical distribution stands alone and physics is overlay-only.
     """
     p2 = model.predict_dist(ev, la, spray)
-    l1 = layer1_fence_interaction(ev, la, spray)
+    l1 = layer1_fence_interaction(ev, la, spray, kd=kd, kl=kl)
     p_hr = p2["HR"]
     if (
         l1["height_at_fence"] is not None
@@ -87,9 +100,11 @@ def predict_fenway(model: FenwayOutcomeModel, ev: float, la: float, spray: float
     return {"dist": dist, "layer2": p2, "layer1": l1}
 
 
-def layer1_fence_interaction(ev: float, la: float, spray: float) -> dict:
+def layer1_fence_interaction(
+    ev: float, la: float, spray: float, kd: float = KD, kl: float = KL,
+) -> dict:
     """Physics fence interaction at Fenway for the cross-section overlay."""
-    carry, apex, hang, xs, ys = trajectory(ev, la)
+    carry, apex, hang, xs, ys = trajectory(ev, la, kd=kd, kl=kl)
     fdist, fh = fence_at(spray)
     h_f = height_at(xs, ys, fdist)
     p_clear = None

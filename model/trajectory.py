@@ -1,7 +1,8 @@
 """Batted-ball trajectory model, ported from the prototype (scratch/pipeline.py).
 
 2D point mass with quadratic drag + effective backspin lift; constants refit
-on Mead's own tracked home runs (see KD/KL note below). With the refit
+per hitter on his own tracked home runs (fit_drag_lift), falling back to the
+Mead-fit KD/KL below for hitters without enough of them. With the fallback
 values the reference carries are 100 mph / 27 deg -> ~385 ft; 105/30 ->
 ~414; 110/28 -> ~436. Lift components are the perpendicular rotation of
 the velocity vector: (-KL*s*vy, +KL*s*vx).
@@ -44,6 +45,37 @@ def trajectory(ev_mph: float, la_deg: float, dt: float = 0.01,
         xs.append(x)
         ys.append(y)
     return x, apex, t, xs, ys
+
+
+def carry_error(evs, las, dists, kd: float, kl: float) -> tuple[float, float]:
+    """(MAE, bias) of modeled carry vs tracked distance for a set of balls."""
+    errs = [trajectory(ev, la, kd=kd, kl=kl)[0] - d for ev, la, d in zip(evs, las, dists)]
+    n = max(len(errs), 1)
+    # plain floats, not numpy scalars: these land in JSON
+    return float(sum(abs(e) for e in errs) / n), float(sum(errs) / n)
+
+
+def fit_drag_lift(evs, las, dists) -> dict:
+    """Grid-search KD/KL against a hitter's own tracked home runs.
+
+    Home runs only: they are the balls whose carry Statcast measures rather
+    than infers, and they are the flights this model has to get right. The
+    grid brackets the physically plausible range for a batted ball with
+    backspin; the search is coarse on purpose, since with ~20 HRs anything
+    finer is fitting noise.
+    """
+    best = None
+    kd = 0.00150
+    while kd <= 0.00240001:
+        kl = 0.00050
+        while kl <= 0.00130001:
+            mae, bias = carry_error(evs, las, dists, kd, kl)
+            if best is None or mae < best["mae_ft"]:
+                best = {"kd": round(kd, 6), "kl": round(kl, 6),
+                        "mae_ft": round(mae, 1), "bias_ft": round(bias, 1)}
+            kl += 0.00002
+        kd += 0.00005
+    return best
 
 
 def height_at(xs: list[float], ys: list[float], d: float) -> float | None:

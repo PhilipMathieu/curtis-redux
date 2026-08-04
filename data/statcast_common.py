@@ -18,8 +18,6 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
-MEAD_MLBAM_ID = 678554
-
 FEET_PER_UNIT = 2.495
 HC_X0 = 125.42
 HC_Y0 = 198.27
