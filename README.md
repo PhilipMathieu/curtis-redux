@@ -83,6 +83,13 @@ so the page stays honest however the race turns.
 The page supports the same `?embed=1` iframe protocol as the player pages
 (height messages arrive as `{type: "league:height", height}`).
 
+The Chase renders three charts (`RaceLine`, `MomentumStrip`, `RungLadder`),
+but `app/src/league/components/` retains the earlier chart library for
+future experiments — `SmallMultiples`, `BumpChart`, `ArchetypeScatter`,
+`StrengthProfile`, `CategoryHeatmap`, and `PlayerValue` (SGP leaderboard +
+roster tables) — all drop-in usable against the same `league.json` and
+`lib/sgp.js`. Vite tree-shakes them out of the build until imported.
+
 ## Embedding in a blog post
 
 The app supports `?embed=1` (suppresses header/footnotes) and posts its

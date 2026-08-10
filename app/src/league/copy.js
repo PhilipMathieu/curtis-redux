@@ -40,6 +40,42 @@ export const COPY = {
     maxed: "—",
   },
 
+  // ---------------------------------------------------------------------
+  // Strings for the retained experiment components (SmallMultiples,
+  // BumpChart, ArchetypeScatter, StrengthProfile, CategoryHeatmap,
+  // PlayerValue) — not rendered by The Chase, kept so the components in
+  // components/ stay drop-in usable for future pages.
+  split: {
+    batting: "Batting points",
+    pitching: "Pitching points",
+  },
+  scatter: {
+    diagonal: "perfect balance",
+  },
+  profile: {
+    axis: "← weaker · distance from league average · stronger →",
+    avgTick: "league avg",
+    above: "above league average",
+    below: "below league average",
+  },
+  matrix: {
+    showPoints: "Roto points",
+    showValues: "Season stats",
+    batting: "Batting",
+    pitching: "Pitching",
+    total: "Total",
+  },
+  players: {
+    rvHead: "SGP · RV+",
+    player: "Player",
+    gpHead: "G",
+    gpLong: "Games with a counted stat line for this team",
+    sgpHead: "SGP",
+    sgpUnit: "standings points",
+    gp: (n) => `${n} games with a counted stat line`,
+    tooSmall: (cat) => `Sample too small to credit ${cat} impact`,
+  },
+
   footnote: (fetched) =>
     `Standings history is reconstructed from each day's lineups (ESPN doesn't ` +
     `archive roto standings); the current day matches ESPN's official scoring ` +
