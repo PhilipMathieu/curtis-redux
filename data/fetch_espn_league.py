@@ -28,8 +28,9 @@ import sys
 import time
 import urllib.error
 import urllib.request
-from datetime import date, timedelta
+from datetime import datetime, timedelta
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 LEAGUE_ID = 45839
 SEASON = 2026
@@ -344,15 +345,20 @@ def build() -> None:
     # The latest period is today and may be mid-games; include it anyway so
     # the chart runs to now — a re-run tomorrow finalizes it.
 
+    # flb scoring periods are consecutive calendar days; the latest period is
+    # today in US/Eastern (roster stat entries carry game ids, not dates, so
+    # this anchor is the date source).
+    today_et = datetime.now(ZoneInfo("America/New_York")).date()
+    period_to_date = lambda p: today_et - timedelta(days=latest - p)
+    print(f"periods {first}..{latest} → {period_to_date(first)}..{today_et}")
+
     acc = {tid: {} for tid in team_ids}  # cumulative raw stat sums
     days = []
     day_points = {tid: [] for tid in team_ids}  # per day: {statId: pts}
     day_totals = {tid: [] for tid in team_ids}
 
-    period_date = None
     for period in range(first, latest + 1):
         roster = fetch({"view": "mRoster", "scoringPeriodId": period})
-        stamp = None
         for team in roster.get("teams", []):
             tid = team["id"]
             if tid not in acc:
@@ -368,20 +374,11 @@ def build() -> None:
                         or st.get("statSplitTypeId") != 5
                     ):
                         continue
-                    ext = st.get("externalId")
-                    if ext and len(str(ext)) == 8 and stamp is None:
-                        stamp = str(ext)
                     for sid, val in (st.get("stats") or {}).items():
                         sid = int(sid)
                         acc[tid][sid] = acc[tid].get(sid, 0.0) + float(val)
 
-        if stamp:
-            period_date = date(
-                int(stamp[:4]), int(stamp[4:6]), int(stamp[6:8])
-            )
-        elif period_date:
-            period_date += timedelta(days=1)
-        days.append(period_date.isoformat() if period_date else f"period-{period}")
+        days.append(period_to_date(period).isoformat())
 
         # cumulative category values → roto points for this day
         cat_values = {}
@@ -411,6 +408,20 @@ def build() -> None:
             flush=True,
         )
         time.sleep(0.3)
+
+    # The reconstruction can drift slightly from ESPN's official scoring
+    # (mid-day adds count for us but not for ESPN), so snap the final day to
+    # the pointsByStat ESPN reports in mStandings.
+    for tid in team_ids:
+        official = official_points.get(tid) or {}
+        if not days or not official:
+            continue
+        for cat in categories:
+            sid = cat["statId"]
+            pts = official.get(str(sid))
+            if pts is not None:
+                day_points[tid][-1][sid] = float(pts)
+        day_totals[tid][-1] = sum(day_points[tid][-1].values())
 
     # Reconcile final cumulative values against ESPN's own standings.
     print("\nreconciliation vs mStandings valuesByStat:")
