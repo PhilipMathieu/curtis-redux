@@ -62,5 +62,7 @@ jobs:
             echo "no data changes"
           else
             git commit -m "Refresh league data"
+            # the branch may have moved while the fetch ran
+            git pull --rebase origin ${{ github.ref_name }}
             git push origin HEAD:${{ github.ref_name }}
           fi
