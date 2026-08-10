@@ -15,6 +15,14 @@ on:
         description: "probe (dump API shapes) or build (write league.json)"
         required: false
         default: "build"
+  # Registers the workflow off-main and refreshes data whenever the fetch
+  # script changes on this branch. The data commit it pushes touches only
+  # league.json, which is outside `paths`, so no run loop.
+  push:
+    branches: [claude/espn-fantasy-baseball-viz-k8zj6m]
+    paths:
+      - data/fetch_espn_league.py
+      - .github/workflows/league-data.yml
 
 permissions:
   contents: write
@@ -34,11 +42,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
-      - name: Fetch league
-        run: python3 data/fetch_espn_league.py ${{ inputs.mode || 'build' }}
+      - name: Probe
+        if: ${{ github.event_name == 'push' || inputs.mode == 'probe' }}
+        continue-on-error: true
+        run: python3 data/fetch_espn_league.py probe
+
+      - name: Build
+        id: build
+        if: ${{ github.event_name == 'push' || (inputs.mode || 'build') == 'build' }}
+        run: python3 data/fetch_espn_league.py build
 
       - name: Commit data
-        if: ${{ (inputs.mode || 'build') == 'build' }}
+        if: ${{ steps.build.outcome == 'success' }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
