@@ -4,6 +4,17 @@
 
 export const ACCENT = "#CE112D"; // primary-500 — the emphasized team
 export const ACCENT_TEXT = "#A00E24"; // primary-600 — passes text contrast
+
+// Up to two teams can be emphasized at once: the focus team in the site
+// red, a comparison team in the link blue (pair CVD ΔE 20.0 on white).
+export const EMPHASIS = [
+  { mark: "#CE112D", text: "#A00E24" },
+  { mark: "#1580B0", text: "#0F6285" },
+];
+export const emphasisOf = (selected, id) => {
+  const i = selected.indexOf(id);
+  return i >= 0 ? EMPHASIS[i] : null;
+};
 export const DE_EMPH = "#CCCCCC"; // gray-300 — every other team's line
 export const GRID = "#E5E5E5"; // gray-200 hairlines
 export const INK = "#1A1A1A"; // gray-800

@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 import Tip from "./Tip.jsx";
-import { ACCENT, ACCENT_TEXT, DE_EMPH, GRID, INK_2, INK_MUTED, fmtDate } from "../lib/viz.js";
+import { DE_EMPH, GRID, INK_2, INK_MUTED, emphasisOf, fmtDate } from "../lib/viz.js";
 
 const W = 720;
 const H = 300;
@@ -85,32 +85,39 @@ export default function BumpChart({ days, teams, series, selected, onSelect }) {
 
         {teams.map(
           (t) =>
-            t.id !== selected && (
+            !selected.includes(t.id) && (
               <path key={t.id} d={path(t.id)} fill="none" stroke={DE_EMPH} strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
             ),
         )}
-        <path d={path(selected)} fill="none" stroke={ACCENT} strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
-        {ranks[selected].map((r, k) => (
-          <circle key={k} cx={x(k)} cy={y(r)} r="3" fill={ACCENT} stroke="#fff" strokeWidth="1.5" />
+        {[...selected].reverse().map((tid) => (
+          <g key={tid}>
+            <path d={path(tid)} fill="none" stroke={emphasisOf(selected, tid).mark} strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
+            {ranks[tid].map((r, k) => (
+              <circle key={k} cx={x(k)} cy={y(r)} r="3" fill={emphasisOf(selected, tid).mark} stroke="#fff" strokeWidth="1.5" />
+            ))}
+          </g>
         ))}
 
-        {teams.map((t) => (
-          <text
-            key={t.id}
-            x={W - M.r + 8}
-            y={y(ranks[t.id].at(-1)) + 3.5}
-            fontSize="10"
-            fontWeight={t.id === selected ? 600 : 400}
-            fill={t.id === selected ? ACCENT_TEXT : INK_2}
-            className="cursor-pointer"
-            onClick={(e) => {
-              e.stopPropagation();
-              onSelect(t.id);
-            }}
-          >
-            {t.abbrev}
-          </text>
-        ))}
+        {teams.map((t) => {
+          const emp = emphasisOf(selected, t.id);
+          return (
+            <text
+              key={t.id}
+              x={W - M.r + 8}
+              y={y(ranks[t.id].at(-1)) + 3.5}
+              fontSize="10"
+              fontWeight={emp ? 600 : 400}
+              fill={emp ? emp.text : INK_2}
+              className="cursor-pointer"
+              onClick={(e) => {
+                e.stopPropagation();
+                onSelect(t.id);
+              }}
+            >
+              {t.abbrev}
+            </text>
+          );
+        })}
 
         {hover && <line x1={x(hover.k)} x2={x(hover.k)} y1={M.t} y2={H - M.b} stroke={GRID} strokeWidth="1" />}
       </svg>
@@ -126,14 +133,19 @@ export default function BumpChart({ days, teams, series, selected, onSelect }) {
           <div className="mb-1 font-semibold text-gray-800">{fmtDate(days[samples[hover.k]])}</div>
           {[...teams]
             .sort((a, b) => ranks[a.id][hover.k] - ranks[b.id][hover.k])
-            .map((t) => (
-              <div key={t.id} className="flex items-center gap-1.5 leading-[18px]">
-                <span className="w-4 text-right font-mono text-gray-500" style={{ fontVariantNumeric: "tabular-nums" }}>
-                  {ranks[t.id][hover.k]}
-                </span>
-                <span className={t.id === selected ? "font-medium text-primary-600" : "text-gray-600"}>{t.abbrev}</span>
-              </div>
-            ))}
+            .map((t) => {
+              const emp = emphasisOf(selected, t.id);
+              return (
+                <div key={t.id} className="flex items-center gap-1.5 leading-[18px]">
+                  <span className="w-4 text-right font-mono text-gray-500" style={{ fontVariantNumeric: "tabular-nums" }}>
+                    {ranks[t.id][hover.k]}
+                  </span>
+                  <span className={emp ? "font-medium" : "text-gray-600"} style={emp ? { color: emp.text } : undefined}>
+                    {t.abbrev}
+                  </span>
+                </div>
+              );
+            })}
         </Tip>
       )}
     </div>

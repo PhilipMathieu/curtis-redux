@@ -71,7 +71,11 @@ export default function CategoryHeatmap({ order, batCats, pitCats, byTeam, nTeam
                 >
                   <td
                     className={`pr-1.5 text-right text-xs whitespace-nowrap ${
-                      t.id === selected ? "font-semibold text-primary-600" : "font-medium text-gray-600"
+                      selected.indexOf(t.id) === 0
+                        ? "font-semibold text-primary-600"
+                        : selected.indexOf(t.id) === 1
+                          ? "font-semibold text-link-600"
+                          : "font-medium text-gray-600"
                     }`}
                     title={t.name}
                   >

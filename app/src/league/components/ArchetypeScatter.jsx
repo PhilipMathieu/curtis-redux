@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 import Tip from "./Tip.jsx";
-import { ACCENT, GRID, INK_2, INK_MUTED, fmtPts } from "../lib/viz.js";
+import { GRID, INK_2, INK_MUTED, emphasisOf, fmtPts } from "../lib/viz.js";
 import { COPY } from "../copy.js";
 
 const W = 440;
@@ -65,7 +65,7 @@ export default function ArchetypeScatter({ teams, split, selected, onSelect }) {
         {teams.map((t) => {
           const cx = x(split[t.id].bat);
           const cy = y(split[t.id].pit);
-          const focus = t.id === selected;
+          const emp = emphasisOf(selected, t.id);
           return (
             <g
               key={t.id}
@@ -75,14 +75,14 @@ export default function ArchetypeScatter({ teams, split, selected, onSelect }) {
               onPointerLeave={() => setHover(null)}
             >
               <circle cx={cx} cy={cy} r="14" fill="transparent" />
-              <circle cx={cx} cy={cy} r={focus ? 7 : 5.5} fill={focus ? ACCENT : "#8A8A8A"} stroke="#fff" strokeWidth="2" />
+              <circle cx={cx} cy={cy} r={emp ? 7 : 5.5} fill={emp ? emp.mark : "#8A8A8A"} stroke="#fff" strokeWidth="2" />
               <text
                 x={cx + labelSide[t.id] * 10}
                 y={cy + 3.5}
                 textAnchor={labelSide[t.id] > 0 ? "start" : "end"}
                 fontSize="10"
-                fontWeight={focus ? 600 : 400}
-                fill={focus ? "#A00E24" : INK_2}
+                fontWeight={emp ? 600 : 400}
+                fill={emp ? emp.text : INK_2}
               >
                 {t.abbrev}
               </text>

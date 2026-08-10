@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 import Tip from "./Tip.jsx";
-import { ACCENT, ACCENT_TEXT, GRID, INK_2, INK_MUTED, fmtStat } from "../lib/viz.js";
+import { GRID, INK_2, INK_MUTED, emphasisOf, fmtStat } from "../lib/viz.js";
 import { COPY } from "../copy.js";
 
 const W = 720;
@@ -52,7 +52,7 @@ export default function StrengthProfile({ teams, cats, current, selected, onSele
             <line x1={M.l} x2={W - M.r} y1={rowY(i)} y2={rowY(i)} stroke="#F4F4F4" strokeWidth="1" />
             {teams.map(
               (t) =>
-                t.id !== selected && (
+                !selected.includes(t.id) && (
                   <circle
                     key={t.id}
                     cx={x(row.z[t.id])}
@@ -68,19 +68,36 @@ export default function StrengthProfile({ teams, cats, current, selected, onSele
                   />
                 ),
             )}
-            <circle
-              cx={x(row.z[selected])}
-              cy={rowY(i)}
-              r="5.5"
-              fill={ACCENT}
-              stroke="#fff"
-              strokeWidth="2"
-              onPointerEnter={() => setHover({ sid: row.statId, tid: selected })}
-              onPointerLeave={() => setHover(null)}
-            />
-            <text x={x(row.z[selected])} y={rowY(i) - 9} textAnchor="middle" fontSize="8.5" fontWeight="600" fill={ACCENT_TEXT} style={{ fontVariantNumeric: "tabular-nums" }}>
-              {fmtStat(row.statId, row.vals[selected])}
-            </text>
+            {[...selected].reverse().map((tid) => {
+              const emp = emphasisOf(selected, tid);
+              const isCompare = selected.indexOf(tid) === 1;
+              return (
+                <g key={tid}>
+                  <circle
+                    cx={x(row.z[tid])}
+                    cy={rowY(i)}
+                    r="5.5"
+                    fill={emp.mark}
+                    stroke="#fff"
+                    strokeWidth="2"
+                    onPointerEnter={() => setHover({ sid: row.statId, tid })}
+                    onPointerLeave={() => setHover(null)}
+                  />
+                  {/* focus value above the dot, comparison value below */}
+                  <text
+                    x={x(row.z[tid])}
+                    y={rowY(i) + (isCompare ? 16 : -9)}
+                    textAnchor="middle"
+                    fontSize="8.5"
+                    fontWeight="600"
+                    fill={emp.text}
+                    style={{ fontVariantNumeric: "tabular-nums" }}
+                  >
+                    {fmtStat(row.statId, row.vals[tid])}
+                  </text>
+                </g>
+              );
+            })}
           </g>
         ))}
       </svg>

@@ -13,16 +13,19 @@ import { SgpLeaderboard, RosterTable } from "./components/PlayerValue.jsx";
 const params = new URLSearchParams(window.location.search);
 const EMBED = params.get("embed") === "1";
 
-function Chip({ on, children, onClick }) {
+function Chip({ role, children, onClick }) {
+  // role: 0 = focus (red), 1 = comparison (blue), null = unselected
+  const cls =
+    role === 0
+      ? "border-primary-500 bg-primary-500/5 text-primary-600"
+      : role === 1
+        ? "border-link-600 bg-link-500/5 text-link-600"
+        : "border-gray-300 bg-white text-gray-600 hover:border-gray-500";
   return (
     <button
       type="button"
       onClick={onClick}
-      className={`cursor-pointer rounded-sm border px-3 py-1 text-xs font-medium tracking-wide transition-colors ${
-        on
-          ? "border-primary-500 bg-primary-500/5 text-primary-600"
-          : "border-gray-300 bg-white text-gray-600 hover:border-gray-500"
-      }`}
+      className={`cursor-pointer rounded-sm border px-3 py-1 text-xs font-medium tracking-wide transition-colors ${cls}`}
     >
       {children}
     </button>
@@ -78,8 +81,13 @@ export default function LeagueApp() {
 
   const sgp = useMemo(() => computeSgp(league), []);
 
-  const [selected, setSelected] = useState(order[0].id);
-  const selectedTeam = teamsById[String(selected)];
+  // one or two emphasized teams: [focus] or [focus, comparison]
+  const [selected, setSelected] = useState([order[0].id]);
+  const toggleTeam = (id) =>
+    setSelected((prev) => {
+      if (prev.includes(id)) return prev.length > 1 ? prev.filter((x) => x !== id) : prev;
+      return prev.length < 2 ? [...prev, id] : [prev[0], id];
+    });
 
   const leader = { ...order[0], total: byTeam[order[0].id].total };
   const second = { ...order[1], total: byTeam[order[1].id].total };
@@ -138,34 +146,35 @@ export default function LeagueApp() {
           ))}
         </div>
 
-        {/* team selector — scopes the focused team in every panel below */}
-        <div className="mb-2 flex flex-wrap gap-1.5">
+        {/* team selector — scopes the emphasized teams in every panel below */}
+        <div className="mb-1 flex flex-wrap items-center gap-1.5">
           {order.map((t) => (
-            <Chip key={t.id} on={selected === t.id} onClick={() => setSelected(t.id)}>
+            <Chip key={t.id} role={selected.indexOf(t.id) >= 0 ? selected.indexOf(t.id) : null} onClick={() => toggleTeam(t.id)}>
               {t.abbrev}
             </Chip>
           ))}
         </div>
+        <p className="mb-2 text-[11px] text-gray-500">{COPY.compareHint(selected.length)}</p>
 
         <Section title={COPY.multiples.title} sub={COPY.multiples.sub}>
-          <SmallMultiples days={days} teams={teams} series={series} order={order} selected={selected} onSelect={setSelected} />
+          <SmallMultiples days={days} teams={teams} series={series} order={order} selected={selected} onSelect={toggleTeam} />
         </Section>
 
         <Section title={COPY.bump.title} sub={COPY.bump.sub}>
           <Card>
-            <BumpChart days={days} teams={teams} series={series} selected={selected} onSelect={setSelected} />
+            <BumpChart days={days} teams={teams} series={series} selected={selected} onSelect={toggleTeam} />
           </Card>
         </Section>
 
         <Section title={COPY.scatter.title} sub={COPY.scatter.sub}>
           <Card>
-            <ArchetypeScatter teams={teams} split={split} selected={selected} onSelect={setSelected} />
+            <ArchetypeScatter teams={teams} split={split} selected={selected} onSelect={toggleTeam} />
           </Card>
         </Section>
 
         <Section title={COPY.profile.title} sub={COPY.profile.sub}>
           <Card>
-            <StrengthProfile teams={teams} cats={[...batCats, ...pitCats]} current={current} selected={selected} onSelect={setSelected} />
+            <StrengthProfile teams={teams} cats={[...batCats, ...pitCats]} current={current} selected={selected} onSelect={toggleTeam} />
           </Card>
         </Section>
 
@@ -178,7 +187,7 @@ export default function LeagueApp() {
               byTeam={byTeam}
               nTeams={teams.length}
               selected={selected}
-              onSelect={setSelected}
+              onSelect={toggleTeam}
             />
           </Card>
         </Section>
@@ -188,13 +197,17 @@ export default function LeagueApp() {
             <h3 className="mb-2 text-sm">{COPY.players.leaderboard}</h3>
             <SgpLeaderboard sgp={sgp} cats={cats} teamsById={teamsById} />
           </Card>
-          <div className="mt-3">
-            <Card>
-              <h3 className="text-sm">{COPY.players.roster(selectedTeam.name)}</h3>
-              <p className="mt-0.5 mb-2 text-[11px] leading-snug text-gray-500">{COPY.players.rosterSub}</p>
-              <RosterTable sgp={sgp} cats={cats} teamId={String(selected)} />
-            </Card>
-          </div>
+          {selected.map((tid, i) => (
+            <div key={tid} className="mt-3">
+              <Card>
+                <h3 className="text-sm" style={{ color: i === 1 ? "#0F6285" : undefined }}>
+                  {COPY.players.roster(teamsById[String(tid)].name)}
+                </h3>
+                <p className="mt-0.5 mb-2 text-[11px] leading-snug text-gray-500">{COPY.players.rosterSub}</p>
+                <RosterTable sgp={sgp} cats={cats} teamId={String(tid)} />
+              </Card>
+            </div>
+          ))}
         </Section>
 
         {!EMBED ? (

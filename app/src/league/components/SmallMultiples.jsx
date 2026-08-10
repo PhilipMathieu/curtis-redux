@@ -45,17 +45,19 @@ export default function SmallMultiples({ days, teams, series, order, selected, o
   return (
     <div ref={wrapRef} className="relative">
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-        {order.map((t) => (
+        {order.map((t) => {
+          const role = selected.indexOf(t.id);
+          return (
           <button
             key={t.id}
             type="button"
             onClick={() => onSelect(t.id)}
             className={`cursor-pointer rounded border bg-white p-1.5 text-left transition-colors ${
-              t.id === selected ? "border-primary-500" : "border-gray-200 hover:border-gray-400"
+              role === 0 ? "border-primary-500" : role === 1 ? "border-link-600" : "border-gray-200 hover:border-gray-400"
             }`}
           >
             <div className="flex items-baseline justify-between px-1">
-              <span className={`text-xs font-semibold ${t.id === selected ? "text-primary-600" : "text-gray-800"}`}>
+              <span className={`text-xs font-semibold ${role === 0 ? "text-primary-600" : role === 1 ? "text-link-600" : "text-gray-800"}`}>
                 {t.abbrev}
               </span>
               <span className="font-mono text-xs text-gray-500" style={{ fontVariantNumeric: "tabular-nums" }}>
@@ -96,7 +98,8 @@ export default function SmallMultiples({ days, teams, series, order, selected, o
               )}
             </svg>
           </button>
-        ))}
+          );
+        })}
       </div>
 
       {hover && wrapRef.current && (

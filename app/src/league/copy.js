@@ -21,6 +21,11 @@ export const COPY = {
   mvpHover: (name, sgp) =>
     `${name} — ${sgp.toFixed(1)} standings points bought, the most in the league`,
 
+  compareHint: (n) =>
+    n < 2
+      ? "Pick a second team to compare it in blue across every panel."
+      : "Click a highlighted team to clear it; click a third to swap the comparison.",
+
   multiples: {
     title: "The season so far",
     sub: "Every team's roto points by day, the rest of the league in gray behind it. Click a panel to focus that team everywhere below; hover for the value on any date.",
@@ -36,7 +41,7 @@ export const COPY = {
   },
   profile: {
     title: "Strength profile",
-    sub: "Each category as a strip: all eight teams in gray, the focused team in red, farther right is better. The spread shows how contested each category is.",
+    sub: "Each category as a strip: all eight teams in gray, the focused team in red (its value above the dot), a compared team in blue (value below). Farther right is better; the spread shows how contested each category is.",
     axis: "← weaker · distance from league average · stronger →",
     avgTick: "league avg",
     above: "above league average",
