@@ -357,6 +357,13 @@ def build() -> None:
     day_points = {tid: [] for tid in team_ids}  # per day: {statId: pts}
     day_totals = {tid: [] for tid in team_ids}
 
+    # Per-player contributions while started for this team (a traded or
+    # dropped player's production stays with the team that started him).
+    # Counting categories plus the components behind AVG/ERA/WHIP so the
+    # app can show a player's impact on the ratios too.
+    PLAYER_STAT_IDS = {0, 1, 5, 20, 21, 23, 34, 37, 39, 45, 48, 53, 57}
+    contrib = {tid: {} for tid in team_ids}  # pid → {name, gp, stats}
+
     for period in range(first, latest + 1):
         roster = fetch({"view": "mRoster", "scoringPeriodId": period})
         for team in roster.get("teams", []):
@@ -374,9 +381,18 @@ def build() -> None:
                         or st.get("statSplitTypeId") != 5
                     ):
                         continue
-                    for sid, val in (st.get("stats") or {}).items():
+                    stats = st.get("stats") or {}
+                    if stats:
+                        rec = contrib[tid].setdefault(
+                            player.get("id"),
+                            {"name": player.get("fullName"), "gp": 0, "stats": {}},
+                        )
+                        rec["gp"] += 1
+                    for sid, val in stats.items():
                         sid = int(sid)
                         acc[tid][sid] = acc[tid].get(sid, 0.0) + float(val)
+                        if sid in PLAYER_STAT_IDS:
+                            rec["stats"][sid] = rec["stats"].get(sid, 0.0) + float(val)
 
         days.append(period_to_date(period).isoformat())
 
@@ -465,6 +481,22 @@ def build() -> None:
                     for cat in categories
                 },
             }
+            for tid in team_ids
+        },
+        "players": {
+            str(tid): sorted(
+                (
+                    {
+                        "name": rec["name"],
+                        "gp": rec["gp"],
+                        "stats": {str(sid): round(v, 1) for sid, v in rec["stats"].items()},
+                    }
+                    for rec in contrib[tid].values()
+                ),
+                key=lambda r: -sum(
+                    r["stats"].get(k, 0.0) for k in ("20", "5", "21", "23", "48", "53", "57")
+                ),
+            )
             for tid in team_ids
         },
         "current": {
