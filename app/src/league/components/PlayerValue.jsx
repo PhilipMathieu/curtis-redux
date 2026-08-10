@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 import Tip from "./Tip.jsx";
-import { BATTING, INK, PITCHING, RAMP } from "../lib/viz.js";
+import { BATTING, BAT_ORDER, INK, PITCHING, RAMP } from "../lib/viz.js";
 import { CAT_SGP_ORDER, rvPlus, sgpSplit } from "../lib/sgp.js";
 import { COPY } from "../copy.js";
 
@@ -130,18 +130,28 @@ export function RosterTable({ sgp, cats, teamId, count = 10 }) {
               </td>
               {CAT_SGP_ORDER.map((sid) => {
                 const v = p.byCat[sid];
+                // a pitcher's empty batting columns (and vice versa) are
+                // blanked — a 0.0 there reads as a stat he doesn't have
+                const otherSide = p.pitcher === BAT_ORDER.includes(sid);
+                if (v == null || (otherSide && Math.abs(v) < 0.005)) {
+                  return (
+                    <td
+                      key={sid}
+                      className="h-6 rounded-[2px] px-1 text-center text-gray-300"
+                      title={v == null ? COPY.players.tooSmall(cats[sid].abbrev) : undefined}
+                    >
+                      {v == null ? "—" : "·"}
+                    </td>
+                  );
+                }
                 return (
                   <td
                     key={sid}
                     className="h-6 rounded-[2px] px-1 text-center"
                     style={{ ...cellStyle(v), fontVariantNumeric: "tabular-nums" }}
-                    title={
-                      v == null
-                        ? COPY.players.tooSmall(cats[sid].abbrev)
-                        : `${p.name} · ${cats[sid].name}: ${v >= 0 ? "+" : ""}${v.toFixed(2)} ${COPY.players.sgpUnit}`
-                    }
+                    title={`${p.name} · ${cats[sid].name}: ${v >= 0 ? "+" : ""}${v.toFixed(2)} ${COPY.players.sgpUnit}`}
                   >
-                    {v == null ? "—" : v.toFixed(1)}
+                    {v.toFixed(1)}
                   </td>
                 );
               })}
