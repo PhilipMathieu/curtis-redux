@@ -54,6 +54,31 @@ Or run the **Rebuild batted-ball data** workflow (`.github/workflows/data.yml`)
 from the Actions tab — it does all of the above on a runner and commits the
 JSON back to the branch.
 
+## The Roto Race (`league.html`)
+
+A second page on the same site: ESPN fantasy baseball league 45839
+("CCL: The Show", 8-team 5×5 roto), charted. Total roto points by day for
+every team (emphasis line chart — pick a team to trace it), each team's
+current points split batting vs. pitching, and a team × category heatmap of
+where every point comes from, toggleable between points and season stats.
+
+- `data/fetch_espn_league.py` — stdlib-only pull of the league. ESPN doesn't
+  archive roto standings, so the history is reconstructed: for every scoring
+  period it fetches that day's lineups (`mRoster` keeps them), sums each
+  starter's daily line into team totals, and re-ranks the ten categories
+  day by day. The final day is snapped to ESPN's official `pointsByStat`,
+  and the run logs any reconstruction drift vs. `valuesByStat`. `probe`
+  mode dumps raw API shapes instead of building.
+- `app/src/league/league.json` — the committed output; the page builds
+  without Python, same as the spray charts.
+- **Refresh league data** (`.github/workflows/league-data.yml`) reruns the
+  fetch on a runner (the fantasy API isn't reachable from every sandbox)
+  and commits the JSON back to the branch it ran on. A private league would
+  need `ESPN_S2`/`SWID` repo secrets; this one is public.
+
+The page supports the same `?embed=1` iframe protocol as the player pages
+(height messages arrive as `{type: "league:height", height}`).
+
 ## Embedding in a blog post
 
 The app supports `?embed=1` (suppresses header/footnotes) and posts its
