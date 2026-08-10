@@ -1,0 +1,51 @@
+name: Refresh league data
+
+# Pulls ESPN fantasy league 45839 where the fantasy API is reachable and
+# commits app/src/league/league.json back to the branch it ran on. The
+# fetch is stdlib-only Python, so no dependency install is needed.
+#
+# `mode: probe` just dumps the API response shapes to the log without
+# committing anything — used to develop the fetch script from a sandbox
+# that can't reach ESPN directly.
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "probe (dump API shapes) or build (write league.json)"
+        required: false
+        default: "build"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: league-data-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      ESPN_S2: ${{ secrets.ESPN_S2 }}
+      SWID: ${{ secrets.SWID }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Fetch league
+        run: python3 data/fetch_espn_league.py ${{ inputs.mode || 'build' }}
+
+      - name: Commit data
+        if: ${{ (inputs.mode || 'build') == 'build' }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add app/src/league/league.json
+          if git diff --cached --quiet; then
+            echo "no data changes"
+          else
+            git commit -m "Refresh league data"
+            git push origin HEAD:${{ github.ref_name }}
+          fi
