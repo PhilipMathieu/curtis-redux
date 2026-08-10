@@ -57,10 +57,14 @@ JSON back to the branch.
 ## The Roto Race (`league.html`)
 
 A second page on the same site: ESPN fantasy baseball league 45839
-("CCL: The Show", 8-team 5×5 roto), charted. Total roto points by day for
-every team (emphasis line chart — pick a team to trace it), each team's
-current points split batting vs. pitching, and a team × category heatmap of
-where every point comes from, toggleable between points and season stats.
+("CCL: The Show", 8-team 5×5 roto), charted. Small multiples of every
+team's roto points by day, a weekly-sampled bump chart of standings
+position, a batting-vs-pitching archetype scatter, a per-team strength
+profile (dot strips against league average), a team × category heatmap,
+and player value in league-true SGP — standings gain points priced off
+this league's own category ladders, with ratio categories credited as
+with/without-him impact on the team's AVG/ERA/WHIP. A team selector
+focuses one team across every panel.
 
 - `data/fetch_espn_league.py` — stdlib-only pull of the league. ESPN doesn't
   archive roto standings, so the history is reconstructed: for every scoring

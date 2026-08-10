@@ -2,9 +2,13 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import league from "./league.json";
 import { COPY } from "./copy.js";
 import { BAT_ORDER, PIT_ORDER, fmtDate, fmtPts } from "./lib/viz.js";
-import ProgressChart from "./components/ProgressChart.jsx";
-import AttributionBars from "./components/AttributionBars.jsx";
+import { computeSgp, lastName } from "./lib/sgp.js";
+import SmallMultiples from "./components/SmallMultiples.jsx";
+import BumpChart from "./components/BumpChart.jsx";
+import ArchetypeScatter from "./components/ArchetypeScatter.jsx";
+import StrengthProfile from "./components/StrengthProfile.jsx";
 import CategoryHeatmap from "./components/CategoryHeatmap.jsx";
+import { SgpLeaderboard, RosterTable } from "./components/PlayerValue.jsx";
 
 const params = new URLSearchParams(window.location.search);
 const EMBED = params.get("embed") === "1";
@@ -35,15 +39,20 @@ function Section({ title, sub, children }) {
   );
 }
 
+const Card = ({ children }) => (
+  <div className="rounded border border-gray-200 bg-white p-3 shadow-sm">{children}</div>
+);
+
 export default function LeagueApp() {
   const rootRef = useRef(null);
   const { teams, categories, days, series, current } = league;
-  const nTeams = teams.length;
 
-  const batCats = BAT_ORDER.map((id) => categories.find((c) => c.statId === id)).filter(Boolean);
-  const pitCats = PIT_ORDER.map((id) => categories.find((c) => c.statId === id)).filter(Boolean);
+  const cats = useMemo(() => Object.fromEntries(categories.map((c) => [c.statId, c])), [categories]);
+  const teamsById = useMemo(() => Object.fromEntries(teams.map((t) => [String(t.id), t])), [teams]);
+  const batCats = BAT_ORDER.map((id) => cats[id]).filter(Boolean);
+  const pitCats = PIT_ORDER.map((id) => cats[id]).filter(Boolean);
 
-  // Teams sorted by current total — the shared order for every chart.
+  // shared: teams sorted by current total, bat/pit split, per-team matrix
   const { order, split, byTeam } = useMemo(() => {
     const byTeam = {};
     for (const t of teams) {
@@ -54,8 +63,7 @@ export default function LeagueApp() {
       for (const c of categories) {
         const pts = series[t.id].byCat[c.statId].at(-1);
         points[c.statId] = pts;
-        const v = current[t.id].espnValues?.[c.statId];
-        values[c.statId] = v ?? current[t.id].values[c.statId];
+        values[c.statId] = current[t.id].espnValues?.[c.statId] ?? current[t.id].values[c.statId];
         if (BAT_ORDER.includes(c.statId)) bat += pts;
         else pit += pts;
       }
@@ -68,9 +76,11 @@ export default function LeagueApp() {
     return { order, split, byTeam };
   }, [teams, categories, series, current]);
 
-  const [selected, setSelected] = useState(order[0].id);
+  const sgp = useMemo(() => computeSgp(league), []);
 
-  // headline stats
+  const [selected, setSelected] = useState(order[0].id);
+  const selectedTeam = teamsById[String(selected)];
+
   const leader = { ...order[0], total: byTeam[order[0].id].total };
   const second = { ...order[1], total: byTeam[order[1].id].total };
   const hot = useMemo(() => {
@@ -83,23 +93,7 @@ export default function LeagueApp() {
     }
     return best;
   }, [teams, series, days]);
-  const swing = useMemo(() => {
-    let best = null;
-    for (const t of teams) {
-      const tot = series[t.id].totals;
-      const lo = Math.min(...tot);
-      const hi = Math.max(...tot);
-      if (!best || hi - lo > best.range) best = { ...t, lo, hi, range: hi - lo };
-    }
-    return best;
-  }, [teams, series]);
-
-  const catLine = (teamId, group) => {
-    const cats = group === "bat" ? batCats : pitCats;
-    return cats
-      .map((c) => `${c.abbrev} ${fmtPts(byTeam[teamId].points[c.statId])}`)
-      .join(" · ");
-  };
+  const mvp = sgp.leaderboard[0];
 
   // iframe embed: report rendered height to the parent page
   useEffect(() => {
@@ -116,7 +110,7 @@ export default function LeagueApp() {
     [COPY.stats.leader, leader.abbrev, `${leader.name} — ${fmtPts(leader.total)} pts`],
     [COPY.stats.gap, fmtPts(leader.total - second.total), `${second.name} sits second at ${fmtPts(second.total)}`],
     [COPY.stats.hot, `${hot.abbrev} +${fmtPts(hot.delta)}`, COPY.hotHover(hot.name, hot.delta)],
-    [COPY.stats.swing, `${swing.abbrev} ${fmtPts(swing.range)}`, COPY.swingHover(swing.name, swing.lo, swing.hi)],
+    [COPY.stats.mvp, `${lastName(mvp.name)} ${mvp.sgp.toFixed(1)}`, COPY.mvpHover(mvp.name, mvp.sgp)],
   ];
 
   return (
@@ -137,18 +131,14 @@ export default function LeagueApp() {
         {/* summary strip */}
         <div className="mb-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
           {tiles.map(([label, value, hover]) => (
-            <div
-              key={label}
-              className="rounded border border-gray-200 bg-white px-2 py-2 text-center shadow-sm"
-              title={hover}
-            >
-              <div className="font-mono text-2xl font-semibold text-gray-800">{value}</div>
+            <div key={label} className="rounded border border-gray-200 bg-white px-2 py-2 text-center shadow-sm" title={hover}>
+              <div className="font-mono text-xl font-semibold text-gray-800">{value}</div>
               <div className="text-[10px] font-medium uppercase tracking-wider text-gray-500">{label}</div>
             </div>
           ))}
         </div>
 
-        {/* team selector — scopes the emphasis in every chart below */}
+        {/* team selector — scopes the focused team in every panel below */}
         <div className="mb-2 flex flex-wrap gap-1.5">
           {order.map((t) => (
             <Chip key={t.id} on={selected === t.id} onClick={() => setSelected(t.id)}>
@@ -157,41 +147,53 @@ export default function LeagueApp() {
           ))}
         </div>
 
-        <Section title={COPY.progress.title} sub={COPY.progress.sub}>
-          <div className="rounded border border-gray-200 bg-white p-3 shadow-sm">
-            <ProgressChart
-              days={days}
-              teams={teams}
-              series={series}
-              selected={selected}
-              onSelect={setSelected}
-            />
-          </div>
+        <Section title={COPY.multiples.title} sub={COPY.multiples.sub}>
+          <SmallMultiples days={days} teams={teams} series={series} order={order} selected={selected} onSelect={setSelected} />
         </Section>
 
-        <Section title={COPY.split.title} sub={COPY.split.sub}>
-          <div className="rounded border border-gray-200 bg-white p-3 shadow-sm">
-            <AttributionBars
-              order={order}
-              split={split}
-              selected={selected}
-              onSelect={setSelected}
-              catLine={catLine}
-            />
-          </div>
+        <Section title={COPY.bump.title} sub={COPY.bump.sub}>
+          <Card>
+            <BumpChart days={days} teams={teams} series={series} selected={selected} onSelect={setSelected} />
+          </Card>
+        </Section>
+
+        <Section title={COPY.scatter.title} sub={COPY.scatter.sub}>
+          <Card>
+            <ArchetypeScatter teams={teams} split={split} selected={selected} onSelect={setSelected} />
+          </Card>
+        </Section>
+
+        <Section title={COPY.profile.title} sub={COPY.profile.sub}>
+          <Card>
+            <StrengthProfile teams={teams} cats={[...batCats, ...pitCats]} current={current} selected={selected} onSelect={setSelected} />
+          </Card>
         </Section>
 
         <Section title={COPY.matrix.title} sub={COPY.matrix.sub}>
-          <div className="rounded border border-gray-200 bg-white p-3 shadow-sm">
+          <Card>
             <CategoryHeatmap
               order={order}
               batCats={batCats}
               pitCats={pitCats}
               byTeam={byTeam}
-              nTeams={nTeams}
+              nTeams={teams.length}
               selected={selected}
               onSelect={setSelected}
             />
+          </Card>
+        </Section>
+
+        <Section title={COPY.players.title} sub={COPY.players.sub}>
+          <Card>
+            <h3 className="mb-2 text-sm">{COPY.players.leaderboard}</h3>
+            <SgpLeaderboard sgp={sgp} cats={cats} teamsById={teamsById} />
+          </Card>
+          <div className="mt-3">
+            <Card>
+              <h3 className="text-sm">{COPY.players.roster(selectedTeam.name)}</h3>
+              <p className="mt-0.5 mb-2 text-[11px] leading-snug text-gray-500">{COPY.players.rosterSub}</p>
+              <RosterTable sgp={sgp} cats={cats} teamId={String(selected)} />
+            </Card>
           </div>
         </Section>
 
@@ -199,11 +201,7 @@ export default function LeagueApp() {
           <footer className="mt-5 border-t border-gray-200 pt-3 text-[11px] leading-relaxed text-gray-500">
             <p className="mb-1">{COPY.footnote(fmtDate(league.fetched))}</p>
             <p className="mb-0">
-              <a
-                href={`https://fantasy.espn.com/baseball/league?leagueId=${league.league.id}`}
-                target="_blank"
-                rel="noopener"
-              >
+              <a href={`https://fantasy.espn.com/baseball/league?leagueId=${league.league.id}`} target="_blank" rel="noopener">
                 {COPY.espnLink}
               </a>
               {" · "}
