@@ -42,6 +42,10 @@ OUT = Path(__file__).resolve().parent.parent / "app" / "src" / "league" / "leagu
 
 # Lineup slots whose stats don't count toward the team's totals.
 NON_COUNTING_SLOTS = {16, 17}  # BE, IL
+# ESPN credits a two-way player (Ohtani) only for the side matching his
+# slot that day: batting stats from batting slots, pitching stats from
+# P/SP/RP. Stat ids < 32 are batting, >= 32 pitching.
+PITCHING_SLOTS = {13, 14, 15}
 
 # ESPN MLB stat ids → labels, batting and pitching. Only the ones a roto
 # league plausibly scores, plus the raw components ratios are derived from.
@@ -363,6 +367,7 @@ def build() -> None:
     # app can show a player's impact on the ratios too.
     PLAYER_STAT_IDS = {0, 1, 5, 20, 21, 23, 34, 37, 39, 45, 48, 53, 57}
     contrib = {tid: {} for tid in team_ids}  # pid → {name, gp, stats}
+    season_totals = {}  # name → full-season stats (currently rostered only)
 
     for period in range(first, latest + 1):
         roster = fetch({"view": "mRoster", "scoringPeriodId": period})
@@ -371,9 +376,25 @@ def build() -> None:
             if tid not in acc:
                 continue
             for entry in team.get("roster", {}).get("entries", []):
-                if entry.get("lineupSlotId") in NON_COUNTING_SLOTS:
-                    continue
+                slot = entry.get("lineupSlotId")
                 player = entry.get("playerPoolEntry", {}).get("player", {})
+                if period == latest:
+                    # season totals for everyone currently rostered (any
+                    # slot), for full-season vs while-started comparisons
+                    for st in player.get("stats", []):
+                        if (
+                            st.get("statSourceId") == 0
+                            and st.get("statSplitTypeId") == 0
+                            and str(st.get("externalId")) == str(SEASON)
+                        ):
+                            season_totals[player.get("fullName")] = {
+                                sid: float(v)
+                                for sid, v in (st.get("stats") or {}).items()
+                                if int(sid) in PLAYER_STAT_IDS
+                            }
+                if slot in NON_COUNTING_SLOTS:
+                    continue
+                pitching_slot = slot in PITCHING_SLOTS
                 for st in player.get("stats", []):
                     if (
                         st.get("scoringPeriodId") != period
@@ -390,6 +411,8 @@ def build() -> None:
                         rec["gp"] += 1
                     for sid, val in stats.items():
                         sid = int(sid)
+                        if pitching_slot != (sid >= 32):
+                            continue  # only the slot's side counts
                         acc[tid][sid] = acc[tid].get(sid, 0.0) + float(val)
                         if sid in PLAYER_STAT_IDS:
                             rec["stats"][sid] = rec["stats"].get(sid, 0.0) + float(val)
@@ -482,6 +505,10 @@ def build() -> None:
                 },
             }
             for tid in team_ids
+        },
+        "seasonTotals": {
+            name: {str(sid): round(v, 1) for sid, v in stats.items()}
+            for name, stats in season_totals.items()
         },
         "players": {
             str(tid): sorted(
