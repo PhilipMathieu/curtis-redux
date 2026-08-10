@@ -54,31 +54,31 @@ Or run the **Rebuild batted-ball data** workflow (`.github/workflows/data.yml`)
 from the Actions tab — it does all of the above on a runner and commits the
 JSON back to the branch.
 
-## The Roto Race (`league.html`)
+## The Chase (`league.html`)
 
 A second page on the same site: ESPN fantasy baseball league 45839
-("CCL: The Show", 8-team 5×5 roto), charted. Small multiples of every
-team's roto points by day, a weekly-sampled bump chart of standings
-position, a batting-vs-pitching archetype scatter, a per-team strength
-profile (dot strips against league average), a team × category heatmap,
-and player value in league-true SGP — standings gain points priced off
-this league's own category ladders, with ratio categories credited as
-with/without-him impact on the team's AVG/ERA/WHIP. A team selector
-focuses one team across every panel.
+("CCL: The Show", 8-team 5x5 roto), told as one narrative — the race for
+first. Three charts: the daily roto-points race (reconstructed
+standings history, leader and chaser inked, turning points annotated), a
+last-30-days momentum strip for all eight teams, and "the rungs" — every
+category ladder with the exact stat gap the chaser needs to climb one
+rung and the leader's cushion, sorted by the chaser's cheapest point.
+The leader/chaser roles, dates, and gaps are all computed from the data,
+so the page stays honest however the race turns.
 
-- `data/fetch_espn_league.py` — stdlib-only pull of the league. ESPN doesn't
-  archive roto standings, so the history is reconstructed: for every scoring
-  period it fetches that day's lineups (`mRoster` keeps them), sums each
-  starter's daily line into team totals, and re-ranks the ten categories
-  day by day. The final day is snapped to ESPN's official `pointsByStat`,
-  and the run logs any reconstruction drift vs. `valuesByStat`. `probe`
-  mode dumps raw API shapes instead of building.
+- `data/fetch_espn_league.py` — stdlib-only pull of the league. ESPN
+  doesn't archive roto standings, so history is reconstructed from each
+  day's lineups (`mRoster`), slot-aware (a two-way player is credited
+  only for the side matching his daily slot, matching ESPN's scoring —
+  reconciliation against `valuesByStat` is exact). Also captures
+  per-player contributions and full-season totals, the raw material for
+  league-true SGP analysis (`app/src/league/lib/sgp.js`).
 - `app/src/league/league.json` — the committed output; the page builds
   without Python, same as the spray charts.
-- **Refresh league data** (`.github/workflows/league-data.yml`) reruns the
-  fetch on a runner (the fantasy API isn't reachable from every sandbox)
-  and commits the JSON back to the branch it ran on. A private league would
-  need `ESPN_S2`/`SWID` repo secrets; this one is public.
+- **Refresh league data** (`.github/workflows/league-data.yml`) reruns
+  the fetch on a runner (the fantasy API isn't reachable from every
+  sandbox) and commits the JSON back to the branch it ran on. A private
+  league would need `ESPN_S2`/`SWID` repo secrets; this one is public.
 
 The page supports the same `?embed=1` iframe protocol as the player pages
 (height messages arrive as `{type: "league:height", height}`).
