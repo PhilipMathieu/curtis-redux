@@ -1,8 +1,16 @@
 import { COPY } from "../copy.js";
 
-// One tab per roster hitter. Real links (?player=slug) so a page can be
-// shared, bookmarked and crawled; the click handler keeps it a SPA nav.
-export default function PlayerNav({ players, slug, available, onSelect }) {
+// One tab per roster hitter, plus a Pipeline tab. Real links (?player=slug /
+// ?view=pipeline) so a page can be shared, bookmarked and crawled; the click
+// handler keeps it a SPA nav.
+export default function PlayerNav({
+  players,
+  slug,
+  available,
+  onSelect,
+  onPipeline,
+  onPipelineActive,
+}) {
   return (
     <nav aria-label={COPY.navLabel} className="mb-4 flex flex-wrap items-center gap-1.5">
       <span className="mr-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-gray-500">
@@ -35,6 +43,25 @@ export default function PlayerNav({ players, slug, available, onSelect }) {
           </a>
         );
       })}
+      {onPipeline && (
+        <a
+          href="?view=pipeline"
+          aria-current={onPipelineActive ? "page" : undefined}
+          title={COPY.pipeline.title}
+          onClick={(e) => {
+            if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+            e.preventDefault();
+            onPipeline();
+          }}
+          className={`ml-1 rounded-sm border px-3 py-1 text-xs font-medium tracking-wide no-underline transition-colors hover:no-underline ${
+            onPipelineActive
+              ? "border-primary-500 bg-primary-500/5 text-primary-600"
+              : "border-gray-300 bg-white text-gray-600 hover:border-gray-500"
+          }`}
+        >
+          {COPY.pipeline.navLabel}
+        </a>
+      )}
     </nav>
   );
 }

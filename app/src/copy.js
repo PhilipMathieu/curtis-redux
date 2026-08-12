@@ -113,4 +113,51 @@ export const COPY = {
   thinSample: (n) =>
     `Only ${n} tracked batted balls — every number on this page carries a wide interval. ` +
     `Read the ranges, not the point estimates.`,
+
+  // Pipeline page — copy for the Sea Dogs → WooSox → Red Sox visualization.
+  pipeline: {
+    navLabel: "Pipeline",
+    kicker: "Portland → Worcester → Boston",
+    title: "The road to Fenway",
+    dek:
+      "Boston's 2026 deadline pickups slot in beside a core that walked the same three-city path: " +
+      "Double-A Portland, Triple-A Worcester, then the majors. Here is how narrow the last two doors are, " +
+      "and who this year's Red Sox are because they got through them.",
+    funnelTitle: "A typical cohort, three years out",
+    funnelCaption:
+      "Take everyone who wears a Sea Dogs uniform in a given season — the top prospects, the org depth, " +
+      "the passing veterans on rehab. Roughly this many still have a Red Sox future two levels later. " +
+      "Bands are illustrative, drawn from how affiliated-baseball cohorts typically thin out, not a Boston-specific audit; " +
+      "the point is the shape of the funnel, not the decimal.",
+    footnote:
+      "Player paths are from MiLB.com and public reporting; cohort widths are an industry-shape " +
+      "approximation, not a per-year Boston tally. The map is the road; every player runs it at their own pace.",
+    columnLabels: {
+      seadogs: "Portland Sea Dogs",
+      seadogsSub: "Double-A",
+      woosox: "Worcester Red Sox",
+      woosoxSub: "Triple-A",
+      redsox: "Boston Red Sox",
+      redsoxSub: "MLB debut",
+      stick: "Sticks in Boston",
+      stickSub: "regular MLB role",
+    },
+    flowLabels: {
+      // "of every 100 Sea Dogs, this many make it to the next level"
+      seadogsToWoosox: "≈ 45 of 100",
+      woosoxToRedsox: "≈ 18 of 100",
+      redsoxToStick: "≈ 7 of 100",
+    },
+    // Two-line off-ramp captions — the SVG renders each string as its own tspan.
+    offRampLabels: {
+      seadogs: ["released, traded,", "or capped at AA"],
+      woosox: ["AAA shuttle — DFA'd,", "dealt, cup elsewhere"],
+      redsox: ["MLB cameo, then", "back to depth"],
+    },
+    narrativesTitle: "How this year's Red Sox got here",
+    narrativesCaption:
+      "Every current Red Sox contributor with a Portland–Worcester line on their card. " +
+      "The dot chart under each name is the same three doors from the funnel above.",
+    stepShort: { seadogs: "SEA", woosox: "WOO", redsox: "BOS" },
+  },
 };
