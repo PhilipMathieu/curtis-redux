@@ -291,87 +291,119 @@ const PLAYERS = [
   },
 ];
 
-// The five source lanes in stack order (top → bottom on the left column).
+// Source lanes are still meaningful — they colour the strands and label
+// each player's card — but the Sankey now stacks Worcester alongside the
+// four outside lanes as direct predecessors of Boston. Sea Dogs sits in
+// its own left column feeding into the Worcester band.
 const LANES = [
-  { key: "pipeline", label: "Portland Sea Dogs", subtitle: "PIPELINE (AA)" },
+  { key: "pipeline", label: "Draft / int'l signing (BOS)" },
   { key: "trade", label: "Trade" },
   { key: "fa", label: "Free agent" },
   { key: "intl", label: "Int'l posting" },
   { key: "rule5", label: "Rule 5" },
 ];
 
-// Sankey layout — left column carries stacked source lanes; the middle
-// carries the WooSox stop only pipeline (and trade+dev, like Wong) touch;
-// the right column is the Red Sox terminus everyone converges on.
+// A player's "immediate predecessor to Boston" — the band they occupy in
+// the middle column. Anyone who touched Worcester is Worcester (Abreu and
+// Wong included); everyone else is the lane they entered the org through.
+function predecessor(p) {
+  if (p.stops.includes("woosox")) return "worcester";
+  return p.lane;
+}
+
+// The middle column, top → bottom.
+const MID_BANDS = [
+  { key: "worcester", label: "Worcester Red Sox", subtitle: "TRIPLE-A", fill: "#CE112D" },
+  { key: "trade", label: "Trade", subtitle: "MLB elsewhere", fill: "#1580B0" },
+  { key: "fa", label: "Free agent", subtitle: "signed off the market", fill: "#B8860B" },
+  { key: "intl", label: "Int'l posting", subtitle: "NPB / KBO", fill: "#7A5197" },
+  { key: "rule5", label: "Rule 5", subtitle: "another org's system", fill: "#157A4A" },
+];
+
+// Layout constants. Three columns:
+//   COL 1 — Sea Dogs (feeder into Worcester, only for AA-Portland alumni)
+//   COL 2 — the stacked "direct predecessor" bands
+//   COL 3 — Boston Red Sox terminus
 const W = 820;
-const COL_W = 130;
 const PAD_X = 20;
+const SEA_W = 110;
+const MID_W = 170;
+const BOS_W = 150;
 const X_SEA = PAD_X;
-const X_BOS = W - PAD_X - COL_W;
-const X_WOO = X_SEA + COL_W + (X_BOS - X_SEA - 2 * COL_W) / 2;
+const X_MID = W - PAD_X - BOS_W - 80 - MID_W;
+const X_BOS = W - PAD_X - BOS_W;
 
-const ROW_H = 22; // vertical space per player-strand
-const LANE_GAP = 14;
-const TOP_PAD = 44; // room for column headers
+const ROW_H = 22;
+const BAND_GAP = 14;
+const TOP_PAD = 44;
 
-// Precompute per-lane and per-player y positions.
-const laneOrder = LANES.map((l) => l.key);
-const playersByLane = Object.fromEntries(laneOrder.map((k) => [k, PLAYERS.filter((p) => p.lane === k)]));
+// Assign each player a "predecessor" band and an in-band slot index.
+const playersByBand = Object.fromEntries(
+  MID_BANDS.map((b) => [b.key, PLAYERS.filter((p) => predecessor(p) === b.key)]),
+);
 
 const layout = {};
 {
   let y = TOP_PAD;
-  for (const laneKey of laneOrder) {
-    const list = playersByLane[laneKey];
+  const bandBounds = {};
+  for (const band of MID_BANDS) {
+    const list = playersByBand[band.key];
     const startY = y;
     list.forEach((p, i) => {
-      layout[p.name] = { laneKey, y: startY + i * ROW_H + ROW_H / 2 };
+      layout[p.name] = { midY: startY + i * ROW_H + ROW_H / 2 };
     });
-    y = startY + list.length * ROW_H + LANE_GAP;
+    const endY = startY + list.length * ROW_H;
+    bandBounds[band.key] = { top: startY - 8, bot: endY + 8 };
+    y = endY + BAND_GAP;
   }
+  layout._bands = bandBounds;
 }
+
 const H = (() => {
-  const last = Object.values(layout).at(-1);
-  return (last?.y ?? TOP_PAD) + ROW_H + 24;
+  const last = MID_BANDS[MID_BANDS.length - 1];
+  return layout._bands[last.key].bot + 28;
 })();
 
-// Boston column is centered vertically so all strands converge nicely.
-const bosCenterY = TOP_PAD + (H - TOP_PAD - 24) / 2;
-const bosH = PLAYERS.length * ROW_H;
-const bosTop = bosCenterY - bosH / 2;
-PLAYERS.forEach((p, i) => {
+// Boston column is centered vertically. Slot order follows the middle-
+// column stack so strands mostly run flat and don't cross needlessly.
+const bosOrder = MID_BANDS.flatMap((b) => playersByBand[b.key]);
+const bosH = bosOrder.length * ROW_H;
+const midStackTop = layout._bands[MID_BANDS[0].key].top + 8;
+const midStackBot = layout._bands[MID_BANDS[MID_BANDS.length - 1].key].bot - 8;
+const bosTop = (midStackTop + midStackBot) / 2 - bosH / 2;
+bosOrder.forEach((p, i) => {
   layout[p.name].bosY = bosTop + i * ROW_H + ROW_H / 2;
 });
 
-// WooSox column: only for players whose stops include "woosox". Position
-// them in that column at the same relative slot they land at in BOS.
-const wooPlayers = PLAYERS.filter((p) => p.stops.includes("woosox"));
-const wooH = wooPlayers.length * ROW_H;
-const wooTop = bosCenterY - wooH / 2;
-wooPlayers.forEach((p, i) => {
-  layout[p.name].wooY = wooTop + i * ROW_H + ROW_H / 2;
+// Sea Dogs feeder box: only pipeline+Abreu players (whose stops include
+// "seadogs") appear here. They align vertically with their Worcester slot
+// so the SEA → WOO segment reads as a flat line.
+const seaPlayers = PLAYERS.filter((p) => p.stops.includes("seadogs"));
+seaPlayers.forEach((p) => {
+  layout[p.name].seaY = layout[p.name].midY;
 });
+const seaBox = (() => {
+  if (!seaPlayers.length) return null;
+  const ys = seaPlayers.map((p) => layout[p.name].seaY);
+  return { top: Math.min(...ys) - ROW_H / 2 - 4, bot: Math.max(...ys) + ROW_H / 2 + 4 };
+})();
 
-// Lane box bounds (for drawing the source pills on the left column).
-const laneBoxes = laneOrder.map((k) => {
-  const list = playersByLane[k];
-  const ys = list.map((p) => layout[p.name].y);
-  const top = Math.min(...ys) - ROW_H / 2;
-  const bot = Math.max(...ys) + ROW_H / 2;
-  return { key: k, top, bot };
-});
-
-// One S-curved path per player, source → (WooSox?) → Red Sox.
+// One path per player: (Sea Dogs?) → middle band → Boston. If the player
+// entered at the middle column, the strand starts at the band's left edge
+// with a small tick so it visually roots inside the band.
 function strandPath(p) {
   const l = layout[p.name];
-  const y0 = l.y;
-  const yB = l.bosY;
-  const points = [{ x: X_SEA + COL_W, y: y0 }];
-  if (p.stops.includes("woosox")) {
-    points.push({ x: X_WOO, y: l.wooY }, { x: X_WOO + COL_W, y: l.wooY });
+  const yMid = l.midY;
+  const yBos = l.bosY;
+  const points = [];
+  if (l.seaY != null) {
+    points.push({ x: X_SEA + SEA_W, y: l.seaY });
+    points.push({ x: X_MID, y: yMid });
+  } else {
+    points.push({ x: X_MID + 4, y: yMid });
   }
-  points.push({ x: X_BOS, y: yB });
-  // Cubic curves between successive points for a smooth flow.
+  points.push({ x: X_MID + MID_W, y: yMid });
+  points.push({ x: X_BOS, y: yBos });
   let d = `M ${points[0].x} ${points[0].y}`;
   for (let i = 1; i < points.length; i++) {
     const a = points[i - 1];
@@ -410,81 +442,98 @@ function Sankey({ hovered, setHovered }) {
       viewBox={`0 0 ${W} ${H}`}
       className="w-full"
       role="img"
-      aria-label="Roster Sankey: five source lanes converging on Boston, one strand per named player"
+      aria-label="Sankey: Sea Dogs feeds Worcester, and Worcester stacks with Trade, Free agent, Int'l posting and Rule 5 as direct predecessors of Boston."
     >
       {/* Column headers */}
-      <text x={X_SEA + COL_W / 2} y={20} textAnchor="middle" className="fill-gray-800" style={{ fontSize: 12, fontWeight: 700 }}>
-        Source
+      <text x={X_SEA + SEA_W / 2} y={20} textAnchor="middle" className="fill-gray-800" style={{ fontSize: 12, fontWeight: 700 }}>
+        Portland Sea Dogs
       </text>
-      <text x={X_SEA + COL_W / 2} y={34} textAnchor="middle" className="fill-gray-500" style={{ fontSize: 10, letterSpacing: 1.4 }}>
-        HOW THEY ENTERED
+      <text x={X_SEA + SEA_W / 2} y={34} textAnchor="middle" className="fill-gray-500" style={{ fontSize: 10, letterSpacing: 1.4 }}>
+        AA · FEEDS WORCESTER
       </text>
-      <text x={X_WOO + COL_W / 2} y={20} textAnchor="middle" className="fill-gray-800" style={{ fontSize: 12, fontWeight: 700 }}>
-        Worcester Red Sox
+      <text x={X_MID + MID_W / 2} y={20} textAnchor="middle" className="fill-gray-800" style={{ fontSize: 12, fontWeight: 700 }}>
+        Direct predecessor
       </text>
-      <text x={X_WOO + COL_W / 2} y={34} textAnchor="middle" className="fill-gray-500" style={{ fontSize: 10, letterSpacing: 1.4 }}>
-        TRIPLE-A DEV STOP
+      <text x={X_MID + MID_W / 2} y={34} textAnchor="middle" className="fill-gray-500" style={{ fontSize: 10, letterSpacing: 1.4 }}>
+        LAST STOP BEFORE BOSTON
       </text>
-      <text x={X_BOS + COL_W / 2} y={20} textAnchor="middle" className="fill-gray-800" style={{ fontSize: 12, fontWeight: 700 }}>
+      <text x={X_BOS + BOS_W / 2} y={20} textAnchor="middle" className="fill-gray-800" style={{ fontSize: 12, fontWeight: 700 }}>
         Boston Red Sox
       </text>
-      <text x={X_BOS + COL_W / 2} y={34} textAnchor="middle" className="fill-gray-500" style={{ fontSize: 10, letterSpacing: 1.4 }}>
+      <text x={X_BOS + BOS_W / 2} y={34} textAnchor="middle" className="fill-gray-500" style={{ fontSize: 10, letterSpacing: 1.4 }}>
         2026 ACTIVE ROSTER
       </text>
 
-      {/* Source lane pills */}
-      {laneBoxes.map(({ key, top, bot }) => {
-        const meta = LANES.find((l) => l.key === key);
+      {/* Sea Dogs feeder box (left column). Only pipeline + Abreu appear
+          here; the strand's SEA → WOO segment stays flat because they use
+          the same y coord in both columns. */}
+      {seaBox && (
+        <g>
+          <rect
+            x={X_SEA}
+            y={seaBox.top}
+            width={SEA_W}
+            height={seaBox.bot - seaBox.top}
+            fill="#CE112D"
+            opacity="0.18"
+            rx="4"
+          />
+          <text x={X_SEA + 10} y={seaBox.top + 14} className="fill-gray-800" style={{ fontSize: 11, fontWeight: 700 }}>
+            Sea Dogs
+          </text>
+          <text x={X_SEA + 10} y={seaBox.top + 26} className="fill-gray-500" style={{ fontSize: 9, letterSpacing: 1.2 }}>
+            AA PORTLAND
+          </text>
+          <text
+            x={X_SEA + SEA_W - 10}
+            y={seaBox.top + 14}
+            textAnchor="end"
+            className="fill-gray-600"
+            style={{ fontSize: 11, fontWeight: 700, fontFamily: "ui-monospace, monospace" }}
+          >
+            {seaPlayers.length}
+          </text>
+        </g>
+      )}
+
+      {/* Stacked middle-column bands: Worcester + the four outside lanes. */}
+      {MID_BANDS.map((band) => {
+        const b = layout._bands[band.key];
+        const count = playersByBand[band.key].length;
         return (
-          <g key={key}>
+          <g key={band.key}>
             <rect
-              x={X_SEA}
-              y={top}
-              width={COL_W}
-              height={bot - top}
-              fill={LANE_FILL[key]}
+              x={X_MID}
+              y={b.top}
+              width={MID_W}
+              height={b.bot - b.top}
+              fill={band.fill}
               opacity="0.18"
               rx="4"
             />
-            <text
-              x={X_SEA + 10}
-              y={top + 14}
-              className="fill-gray-800"
-              style={{ fontSize: 11, fontWeight: 700 }}
-            >
-              {meta.label}
+            <text x={X_MID + 10} y={b.top + 14} className="fill-gray-800" style={{ fontSize: 11, fontWeight: 700 }}>
+              {band.label}
             </text>
-            {meta.subtitle && (
-              <text
-                x={X_SEA + 10}
-                y={top + 26}
-                className="fill-gray-500"
-                style={{ fontSize: 9, letterSpacing: 1.2 }}
-              >
-                {meta.subtitle}
+            {band.subtitle && (
+              <text x={X_MID + 10} y={b.top + 26} className="fill-gray-500" style={{ fontSize: 9, letterSpacing: 1.2 }}>
+                {band.subtitle}
               </text>
             )}
             <text
-              x={X_SEA + COL_W - 10}
-              y={top + 14}
+              x={X_MID + MID_W - 10}
+              y={b.top + 14}
               textAnchor="end"
               className="fill-gray-600"
               style={{ fontSize: 11, fontWeight: 700, fontFamily: "ui-monospace, monospace" }}
             >
-              {playersByLane[key].length}
+              {count}
             </text>
           </g>
         );
       })}
 
-      {/* Worcester stop pill (only pipeline + Wong pass through) */}
-      <rect x={X_WOO} y={wooTop - 8} width={COL_W} height={wooH + 16} fill="#CE112D" opacity="0.14" rx="4" />
-      <text x={X_WOO + 10} y={wooTop + 4} className="fill-gray-500" style={{ fontSize: 9, letterSpacing: 1.2 }}>
-        {wooPlayers.length} PASSED THROUGH
-      </text>
-
       {/* Boston terminus pill */}
-      <rect x={X_BOS} y={bosTop - 8} width={COL_W} height={bosH + 16} fill="#CE112D" opacity="0.22" rx="4" />
+      <rect x={X_BOS} y={bosTop - 8} width={BOS_W} height={bosH + 16} fill="#CE112D" opacity="0.24" rx="4" />
       <text x={X_BOS + 10} y={bosTop + 4} className="fill-gray-500" style={{ fontSize: 9, letterSpacing: 1.2 }}>
         {PLAYERS.length} STRANDS IN
       </text>
