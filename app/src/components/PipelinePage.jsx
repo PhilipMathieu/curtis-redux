@@ -21,12 +21,14 @@ const PLAYERS = [
     lane: "pipeline",
     stops: ["seadogs", "woosox", "redsox"],
     from: "2022 draft, 2nd rd",
-    line: "84 games in Portland (.269/.367/.489) at 20, then Worcester by summer, Boston by the next season.",
+    line:
+      "84 games in Portland at 20 (.269/.367/.489, 15 HR); to Worcester the next summer; " +
+      "MLB debut June 9, 2025.",
     timeline: [
       { year: "2022", label: "Drafted by BOS (2nd rd)", kind: "draft" },
-      { year: "2023", label: "A+ Greenville", kind: "milb" },
+      { year: "2023", label: "A Salem → A+ Greenville → AA Portland", kind: "milb" },
       { year: "2024", label: "AA Portland → AAA Worcester", kind: "milb" },
-      { year: "2025", label: "MLB debut, Boston", kind: "mlbBos" },
+      { year: "2025", label: "AAA Worcester → MLB Boston (Jun 9)", kind: "mlbBos" },
       { year: "2026", label: "MLB Boston", kind: "mlbBos" },
     ],
   },
@@ -35,14 +37,16 @@ const PLAYERS = [
     pos: "SS / 3B",
     lane: "pipeline",
     stops: ["seadogs", "woosox", "redsox"],
-    from: "2021 draft, 1st rd",
-    line: "Doubled in his first Sea Dogs at-bat of '24, hit .307 through 77 AA games, up in Boston the same season.",
+    from: "2021 draft, 1st rd (#4)",
+    line:
+      "Two full seasons at AA Portland (.307 through 77 games in '24), Worcester the next spring, " +
+      "MLB debut May 24, 2025.",
     timeline: [
       { year: "2021", label: "Drafted by BOS (1st rd, #4)", kind: "draft" },
       { year: "2022", label: "A / A+", kind: "milb" },
-      { year: "2023", label: "AA Portland", kind: "milb" },
-      { year: "2024", label: "AA Portland → AAA Worcester", kind: "milb" },
-      { year: "2025", label: "MLB debut, Boston", kind: "mlbBos" },
+      { year: "2023", label: "A+ Greenville → AA Portland", kind: "milb" },
+      { year: "2024", label: "AA Portland (full season)", kind: "milb" },
+      { year: "2025", label: "AAA Worcester → MLB Boston (May 24)", kind: "mlbBos" },
       { year: "2026", label: "MLB Boston", kind: "mlbBos" },
     ],
   },
@@ -288,6 +292,74 @@ const PLAYERS = [
       { year: "2019–23", label: "TEX system → AA / AAA in '23", kind: "milb" },
       { year: "2023 Dec", label: "Rule 5 by NYM → traded to BOS", kind: "event" },
       { year: "2024–26", label: "MLB Boston", kind: "mlbBos" },
+    ],
+  },
+  // ── 2026 deadline pickups (each also has their own tab on this site) ─
+  {
+    name: "Curtis Mead",
+    pos: "3B",
+    lane: "trade",
+    stops: ["redsox"],
+    from: "trade from WSH, Jul 25 2026",
+    line:
+      "Right-handed Australian bat signed by Tampa as a 17-year-old; TB → CHW → WSH → BOS at the deadline for Connelly Early.",
+    timeline: [
+      { year: "2018", label: "Signed intl by TB (Australia)", kind: "draft" },
+      { year: "2019–22", label: "TB minor leagues", kind: "milb" },
+      { year: "2023", label: "MLB debut, Tampa Bay (Aug 4)", kind: "mlbOther" },
+      { year: "2024–25", label: "MLB Tampa Bay → Chicago (AL)", kind: "mlbOther" },
+      { year: "2026", label: "MLB Washington", kind: "mlbOther" },
+      { year: "2026 Jul 25", label: "Traded to BOS for Connelly Early", kind: "event" },
+      { year: "2026", label: "MLB Boston", kind: "mlbBos" },
+    ],
+  },
+  {
+    name: "Adley Rutschman",
+    pos: "C",
+    lane: "trade",
+    stops: ["redsox"],
+    from: "trade from BAL, Aug 3 2026",
+    line: "Switch-hitting former #1 overall pick — the headline piece of a three-prospects-plus-Narváez deadline deal.",
+    timeline: [
+      { year: "2019", label: "Drafted by BAL (1st overall)", kind: "draft" },
+      { year: "2020–21", label: "BAL system", kind: "milb" },
+      { year: "2022", label: "MLB debut, Baltimore (May 21)", kind: "mlbOther" },
+      { year: "2023–26", label: "MLB Baltimore", kind: "mlbOther" },
+      { year: "2026 Aug 3", label: "Traded to BOS", kind: "event" },
+      { year: "2026", label: "MLB Boston", kind: "mlbBos" },
+    ],
+  },
+  {
+    name: "Jake Rogers",
+    pos: "C",
+    lane: "trade",
+    stops: ["redsox"],
+    from: "trade in the Rutschman deal",
+    line: "Detroit lifer through '26, brief BAL stop, then to BOS the same day as Rutschman as the second catcher in that package.",
+    timeline: [
+      { year: "2016", label: "Drafted by HOU → traded to DET", kind: "draft" },
+      { year: "2019", label: "MLB debut, Detroit (Jul 30)", kind: "mlbOther" },
+      { year: "2020–25", label: "MLB Detroit", kind: "mlbOther" },
+      { year: "2026", label: "MLB Detroit → Baltimore", kind: "mlbOther" },
+      { year: "2026 Aug 3", label: "Traded to BOS in Rutschman deal", kind: "event" },
+      { year: "2026", label: "MLB Boston", kind: "mlbBos" },
+    ],
+  },
+  {
+    name: "Eli White",
+    pos: "OF",
+    lane: "trade",
+    stops: ["redsox"],
+    from: "trade from ATL, Aug 3 2026",
+    line: "Fourth-outfielder specialist — TEX for three years, then ATL, then a deadline flip to BOS for Tyler Uberstine.",
+    timeline: [
+      { year: "2016", label: "Drafted by OAK", kind: "draft" },
+      { year: "2018", label: "Traded to TEX", kind: "event" },
+      { year: "2020", label: "MLB debut, Texas (Sep 1)", kind: "mlbOther" },
+      { year: "2021–22", label: "MLB Texas", kind: "mlbOther" },
+      { year: "2023–26", label: "MLB Atlanta", kind: "mlbOther" },
+      { year: "2026 Aug 3", label: "Traded to BOS for Tyler Uberstine", kind: "event" },
+      { year: "2026", label: "MLB Boston", kind: "mlbBos" },
     ],
   },
 ];
@@ -566,10 +638,12 @@ function Sankey({ hovered, setHovered }) {
           );
         })()}
 
-      {/* Hit targets — one wide invisible path per strand for reliable hover.
-          Rendered last so they sit above the visible strands. Explicit
-          pointer-events="stroke" is required because a transparent stroke
-          would otherwise be ignored by the default visiblePainted rule. */}
+      {/* Hit targets — one wide invisible path per strand for reliable
+          hover and click. Rendered last so they sit above the visible
+          strands. Explicit pointer-events="stroke" is required because a
+          transparent stroke would otherwise be ignored by the default
+          visiblePainted rule. Click PINs a player so a reader can leave
+          the diagram to inspect the detail card without losing it. */}
       {PLAYERS.map((p) => (
         <path
           key={`hit-${p.name}`}
@@ -580,8 +654,15 @@ function Sankey({ hovered, setHovered }) {
           pointerEvents="stroke"
           onMouseEnter={() => setHovered(p.name)}
           onFocus={() => setHovered(p.name)}
+          onClick={() => setHovered(p.name)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              setHovered(p.name);
+            }
+          }}
           tabIndex={0}
-          aria-label={p.name}
+          aria-label={`${p.name}, ${p.pos}, entered via ${p.lane}`}
           style={{ cursor: "pointer", outline: "none" }}
         />
       ))}
@@ -657,39 +738,90 @@ function DetailCard({ p }) {
 
 // Real cohort funnel — every player on the 2023 Portland Sea Dogs
 // full-season roster, followed forward through 2026 via MLB StatsAPI
-// (see data/fetch_seadogs_cohort.py).
+// (see data/fetch_seadogs_cohort.py). Bars stack the "already an MLB
+// vet before 2023" (rehab / org depth) piece under the "genuine
+// prospect" piece so the honest headline number is legible at a glance.
 function CohortStrip() {
   const s = COHORT_DATA.summary;
   const cells = [
-    { label: `${s.cohort_season} Sea Dogs`, sub: "AA full-season roster", value: s.cohort_size },
-    { label: "Reached Worcester", sub: "BOS AAA, 2023–26", value: s.reached_woo },
-    { label: "Reached MLB", sub: "any team, 2023–26", value: s.reached_mlb_any },
-    { label: "Reached MLB Boston", sub: "wearing the Sox", value: s.reached_mlb_bos },
+    {
+      label: `${s.cohort_season} Sea Dogs`,
+      sub: "AA full-season roster",
+      total: s.cohort_size,
+      prospects: s.prospect_count,
+    },
+    {
+      label: "Reached Worcester",
+      sub: "BOS AAA, 2023–26",
+      total: s.reached_woo,
+      prospects: s.prospect_reached_woo,
+    },
+    {
+      label: "Reached MLB",
+      sub: "any team, 2023–26",
+      total: s.reached_mlb_any,
+      prospects: s.prospect_reached_mlb_any,
+    },
+    {
+      label: "Reached MLB Boston",
+      sub: "wearing the Sox",
+      total: s.reached_mlb_bos,
+      prospects: s.prospect_reached_mlb_bos,
+    },
   ];
-  const max = cells[0].value;
+  const max = cells[0].total;
+  const BAR_H = 100;
   return (
     <div className="rounded border border-gray-200 bg-white p-3 shadow-sm">
       <div className="mb-1 text-[11px] font-medium uppercase tracking-widest text-gray-500">
         {COPY.pipeline.funnelTitle}
       </div>
-      <p className="mt-0 mb-2 text-[11px] leading-snug text-gray-500">
+      <p className="mt-0 mb-3 text-[11px] leading-snug text-gray-500">
         {COPY.pipeline.funnelCaption}
       </p>
-      <div className="flex items-end gap-1">
-        {cells.map((c, i) => (
-          <div key={c.label} className="flex flex-1 flex-col items-center">
-            <div
-              className="w-full rounded-sm bg-primary-500"
-              style={{ height: `${(c.value / max) * 88}px`, opacity: 0.95 - i * 0.12 }}
-              title={`${c.value} of ${max}`}
-            />
-            <div className="mt-1 font-mono text-[16px] font-semibold text-gray-800">{c.value}</div>
-            <div className="text-center text-[10px] font-medium uppercase tracking-wider text-gray-500">
-              {c.label}
+      <div className="flex items-end gap-2">
+        {cells.map((c) => {
+          const vetShare = c.total - c.prospects;
+          return (
+            <div key={c.label} className="flex flex-1 flex-col items-center">
+              <div
+                className="flex w-full flex-col justify-end"
+                style={{ height: `${BAR_H}px` }}
+                title={`${c.total} total (${vetShare} prior-MLB vets, ${c.prospects} prospects)`}
+              >
+                <div
+                  className="w-full bg-gray-400"
+                  style={{ height: `${(vetShare / max) * BAR_H}px` }}
+                />
+                <div
+                  className="w-full bg-primary-500"
+                  style={{ height: `${(c.prospects / max) * BAR_H}px` }}
+                />
+              </div>
+              <div className="mt-1 flex items-baseline gap-1">
+                <span className="font-mono text-[16px] font-semibold text-gray-800">{c.prospects}</span>
+                {vetShare > 0 && (
+                  <span className="font-mono text-[11px] text-gray-500">+{vetShare}</span>
+                )}
+              </div>
+              <div className="text-center text-[10px] font-medium uppercase tracking-wider text-gray-500">
+                {c.label}
+              </div>
+              <div className="text-center text-[9px] text-gray-500">{c.sub}</div>
             </div>
-            <div className="text-center text-[9px] text-gray-500">{c.sub}</div>
-          </div>
-        ))}
+          );
+        })}
+      </div>
+      <div className="mt-2 flex items-center gap-3 text-[10px] text-gray-500">
+        <span className="flex items-center gap-1">
+          <span className="inline-block h-2.5 w-2.5 rounded-sm bg-primary-500" />
+          Prospect
+        </span>
+        <span className="flex items-center gap-1">
+          <span className="inline-block h-2.5 w-2.5 rounded-sm bg-gray-400" />
+          Prior-MLB vet (rehab / depth)
+        </span>
+        <span className="ml-auto italic">Big number = prospects; +N = vets on top.</span>
       </div>
     </div>
   );
@@ -717,11 +849,16 @@ function CohortNames() {
           {list.map((p) => (
             <span
               key={p.id}
-              className="rounded-sm px-1.5 py-0.5 text-[11px] text-gray-700"
+              className={`rounded-sm px-1.5 py-0.5 text-[11px] ${p.debut_before_cohort ? "italic text-gray-500" : "text-gray-700"}`}
               style={{ background: tint }}
-              title={`${p.name} · ${p.pos}`}
+              title={
+                p.debut_before_cohort
+                  ? `${p.name} · ${p.pos} — MLB debut ${p.mlb_debut} (prior-MLB vet on the Sea Dogs that season)`
+                  : `${p.name} · ${p.pos} — MLB debut ${p.mlb_debut || "not yet"}`
+              }
             >
               {p.name}
+              {p.debut_before_cohort && <span className="ml-1 text-[9px] text-gray-400">vet</span>}
             </span>
           ))}
         </div>
@@ -778,18 +915,42 @@ export default function PipelinePage() {
         <CohortNames />
       </div>
 
-      <section
-        className="rounded border border-gray-200 bg-white p-4 shadow-sm"
-        onMouseLeave={() => setHovered(null)}
-      >
+      <section className="rounded border border-gray-200 bg-white p-4 shadow-sm">
         <div className="text-[11px] font-medium uppercase tracking-widest text-gray-500">
-          Every current Red Sox contributor — one strand each
+          {COPY.pipeline.sankeyTitle}
         </div>
-        <p className="mt-1 mb-3 text-[11px] leading-snug text-gray-500">
-          Five source lanes converge on the 2026 active roster: the Portland–Worcester pipeline plus every
-          way a player arrives from outside the org. Hover a strand to see who it is and how they got here.
-        </p>
-        <Sankey hovered={hovered} setHovered={setHovered} />
+        <p className="mt-1 mb-3 text-[11px] leading-snug text-gray-500">{COPY.pipeline.sankeyCaption}</p>
+
+        {/* Color legend + accessible player picker sit above the SVG so
+            they're reachable by anyone who can't or doesn't want to hover
+            over the strands. */}
+        <div className="mb-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px]">
+          {LANES.map((l) => (
+            <span key={l.key} className="flex items-center gap-1.5 text-gray-600">
+              <span className="inline-block h-2.5 w-3.5 rounded-sm" style={{ background: LANE_FILL[l.key] }} />
+              {l.label}
+            </span>
+          ))}
+          <label className="ml-auto flex items-center gap-2 text-gray-600">
+            <span className="text-[10px] uppercase tracking-wider">Focus</span>
+            <select
+              value={hovered ?? ""}
+              onChange={(e) => setHovered(e.target.value || null)}
+              className="rounded-sm border border-gray-300 bg-white px-2 py-1 text-[12px] text-gray-800"
+            >
+              <option value="">— none —</option>
+              {PLAYERS.map((p) => (
+                <option key={p.name} value={p.name}>
+                  {p.name} ({p.pos})
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+
+        <div onMouseLeave={() => setHovered(null)}>
+          <Sankey hovered={hovered} setHovered={setHovered} />
+        </div>
       </section>
 
       <div className="mt-4">

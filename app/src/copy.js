@@ -120,58 +120,24 @@ export const COPY = {
     kicker: "Portland → Worcester → Boston",
     title: "The road to Fenway",
     dek:
-      "Boston's 2026 deadline pickups slot in beside a core that walked the same three-city path: " +
-      "Double-A Portland, Triple-A Worcester, then the majors. Here is how narrow the last two doors are, " +
-      "and who this year's Red Sox are because they got through them.",
+      "Two questions on this page. First: of the players who wear a Sea Dogs uniform, how many actually " +
+      "reach Fenway? Second: of the players who suit up for the 2026 Red Sox — the deadline pickups this site " +
+      "was built around, plus the core they slot in beside — which road did each of them take?",
     funnelTitle: "The 2023 Sea Dogs cohort, three seasons on",
     funnelCaption:
-      "Actual MLB StatsAPI counts, not an approximation: every player on Portland's 2023 full-season roster, " +
-      "tracked forward through 2026 to see who reached Triple-A Worcester, who broke into the majors — anywhere " +
-      "— and who wound up in Boston. Rehab veterans (Story, Kluber, Bleier) do count in the cohort; they were " +
-      "on the Sea Dogs' full-season roster.",
+      "Every player on Portland's 2023 full-season roster, tracked forward through 2026 via MLB StatsAPI. " +
+      "Ten of the 59 had already debuted in the majors before 2023 (rehab and org depth — Story, Kluber, " +
+      "Whitlock, Bleier, Reyes, Chang, Schreiber, Rodríguez, Kelly, Sharp). The bars split those out: the " +
+      "left value is the count including the vets, the right value is prospects only — the honest number.",
     footnote:
-      "Cohort counts and per-year stops from MLB StatsAPI (fullSeason team rosters, 2023–26). " +
-      "Named-player narratives cross-checked against MiLB.com and public reporting. Re-runnable: " +
+      "Cohort counts and per-year stops from MLB StatsAPI (fullSeason team rosters and mlbDebutDate hydration, " +
+      "2023–26). Named-player narratives cross-checked against MiLB.com and public reporting. Re-runnable: " +
       "`uv run python data/fetch_seadogs_cohort.py`.",
-    columnLabels: {
-      seadogs: "Portland Sea Dogs",
-      seadogsSub: "Double-A",
-      woosox: "Worcester Red Sox",
-      woosoxSub: "Triple-A",
-      redsox: "Boston Red Sox",
-      redsoxSub: "MLB debut",
-      stick: "Sticks in Boston",
-      stickSub: "regular MLB role",
-    },
-    flowLabels: {
-      // "of every 100 Sea Dogs, this many make it to the next level"
-      seadogsToWoosox: "≈ 45 of 100",
-      woosoxToRedsox: "≈ 18 of 100",
-      redsoxToStick: "≈ 7 of 100",
-    },
-    // Two-line off-ramp captions — the SVG renders each string as its own tspan.
-    offRampLabels: {
-      seadogs: ["released, traded,", "or capped at AA"],
-      woosox: ["AAA shuttle — DFA'd,", "dealt, cup elsewhere"],
-      redsox: ["MLB cameo, then", "back to depth"],
-    },
-    narrativesTitle: "How this year's Red Sox got here",
-    narrativesCaption:
-      "Every current Red Sox contributor with a Portland–Worcester line on their card. " +
-      "The dot chart under each name is the same three doors from the funnel above.",
-    stepShort: { seadogs: "SEA", woosox: "WOO", redsox: "BOS" },
-
-    outsideTitle: "From outside the org",
-    outsideCaption:
-      "The other lane onto the roster: signed off the free-agent market, acquired in a trade, " +
-      "or plucked from another system's Rule 5 draft. They never wore a Sea Dogs or WooSox uniform.",
-    outsideDeadlineNote:
-      "The 2026 deadline pickups — Mead, Rutschman, Rogers and White — each have their own tab in the nav above.",
-    routeLabels: {
-      trade: "TRADE",
-      fa: "FREE AGENT",
-      rule5: "RULE 5",
-      intl: "INT'L POSTING",
-    },
+    sankeyTitle: "The 2026 Red Sox — one strand per named player",
+    sankeyCaption:
+      "22 current-team names (the 2026 deadline pickups plus 18 other contributors) routed through their " +
+      "last stop before Boston. Portland → Worcester on the pipeline lane; Trade, Free agent, Int'l posting " +
+      "and Rule 5 as direct predecessor bands. Strand color marks the entry lane; hover, click, or use the " +
+      "dropdown to pin one and read the timeline.",
   },
 };
