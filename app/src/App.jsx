@@ -7,6 +7,7 @@ import DetailCard from "./components/DetailCard.jsx";
 import PlayerNav from "./components/PlayerNav.jsx";
 import StatLine from "./components/StatLine.jsx";
 import TransitionMatrix from "./components/TransitionMatrix.jsx";
+import PipelinePage from "./components/PipelinePage.jsx";
 
 const PLAYERS = roster.players;
 // One JSON per player, code-split: a page only downloads its own hitter.
@@ -20,6 +21,12 @@ const EMBED = params.get("embed") === "1";
 function slugFromUrl() {
   const q = new URLSearchParams(window.location.search).get("player");
   return PLAYERS.some((p) => p.slug === q) ? q : DEFAULT_SLUG;
+}
+
+function viewFromUrl() {
+  return new URLSearchParams(window.location.search).get("view") === "pipeline"
+    ? "pipeline"
+    : "player";
 }
 
 const STORY_FILTERS = ["all", "flipped", "monster"];
@@ -42,15 +49,19 @@ function Chip({ on, children, onClick }) {
 
 export default function App() {
   const [slug, setSlug] = useState(slugFromUrl);
+  const [view, setView] = useState(viewFromUrl);
   const [payload, setPayload] = useState(null);
   const [sel, setSel] = useState(null);
   const [story, setStory] = useState("all");
   const rootRef = useRef(null);
   const player = PLAYERS.find((p) => p.slug === slug);
 
-  // back/forward between player pages
+  // back/forward between pages
   useEffect(() => {
-    const onPop = () => setSlug(slugFromUrl());
+    const onPop = () => {
+      setSlug(slugFromUrl());
+      setView(viewFromUrl());
+    };
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
   }, []);
@@ -58,8 +69,18 @@ export default function App() {
   const go = useCallback((next) => {
     const url = new URL(window.location.href);
     url.searchParams.set("player", next);
+    url.searchParams.delete("view");
     window.history.pushState({}, "", url);
     setSlug(next);
+    setView("player");
+  }, []);
+
+  const goPipeline = useCallback(() => {
+    const url = new URL(window.location.href);
+    url.searchParams.set("view", "pipeline");
+    url.searchParams.delete("player");
+    window.history.pushState({}, "", url);
+    setView("pipeline");
   }, []);
 
   // load the selected player's batted balls; ignore a stale resolve if the
@@ -80,8 +101,9 @@ export default function App() {
   }, [slug]);
 
   useEffect(() => {
-    if (!EMBED) document.title = COPY.pageTitle(player);
-  }, [player]);
+    if (EMBED) return;
+    document.title = view === "pipeline" ? `${COPY.pipeline.title} — ${COPY.siteTitle}` : COPY.pageTitle(player);
+  }, [player, view]);
 
   // iframe embed: report rendered height to the parent page
   useEffect(() => {
@@ -132,10 +154,12 @@ export default function App() {
       ]
     : []; // [label, value, hoverDetail?]
 
+  const isPipeline = view === "pipeline" && !EMBED;
+
   return (
     <div ref={rootRef} className={EMBED ? "py-2" : "py-8"}>
       <main className="mx-auto max-w-2xl px-4">
-        {!EMBED && (
+        {!EMBED && !isPipeline && (
           <header className="mb-5 border-b-2 border-gray-200 pb-4">
             <div className="text-xs font-semibold uppercase tracking-[0.22em] text-primary-500">
               {COPY.kicker(player)}
@@ -148,9 +172,18 @@ export default function App() {
           </header>
         )}
 
-        <PlayerNav players={PLAYERS} slug={slug} available={AVAILABLE} onSelect={go} />
+        <PlayerNav
+          players={PLAYERS}
+          slug={isPipeline ? null : slug}
+          available={AVAILABLE}
+          onSelect={go}
+          onPipeline={goPipeline}
+          onPipelineActive={isPipeline}
+        />
 
-        {!meta ? (
+        {isPipeline ? (
+          <PipelinePage />
+        ) : !meta ? (
           <p className="rounded border border-dashed border-gray-300 bg-white p-6 text-center text-gray-500">
             {AVAILABLE.includes(slug) ? COPY.loading(player) : COPY.noData(player)}
           </p>
@@ -223,11 +256,11 @@ export default function App() {
           </>
         )}
 
-        {!EMBED ? (
+        {!EMBED && !isPipeline ? (
           <footer className="mt-5 border-t border-gray-200 pt-3 text-[11px] leading-relaxed text-gray-500">
             <p className="mb-0">{meta ? COPY.footnote(meta, player.short) : COPY.navHint}</p>
           </footer>
-        ) : (
+        ) : !EMBED ? null : (
           <div className="mt-2 text-right text-[11px]">
             <a href={`${window.location.pathname}?player=${slug}`} target="_blank" rel="noopener">
               {COPY.openFull}

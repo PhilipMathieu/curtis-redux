@@ -113,4 +113,31 @@ export const COPY = {
   thinSample: (n) =>
     `Only ${n} tracked batted balls — every number on this page carries a wide interval. ` +
     `Read the ranges, not the point estimates.`,
+
+  // Pipeline page — copy for the Sea Dogs → WooSox → Red Sox visualization.
+  pipeline: {
+    navLabel: "Pipeline",
+    kicker: "Portland → Worcester → Boston",
+    title: "The road to Fenway",
+    dek:
+      "Two questions on this page. First: of the players who wear a Sea Dogs uniform, how many actually " +
+      "reach Fenway? Second: of the players who suit up for the 2026 Red Sox — the deadline pickups this site " +
+      "was built around, plus the core they slot in beside — which road did each of them take?",
+    funnelTitle: "The 2023 Sea Dogs cohort, three seasons on",
+    funnelCaption:
+      "Every player on Portland's 2023 full-season roster, tracked forward through 2026 via MLB StatsAPI. " +
+      "Ten of the 59 had already debuted in the majors before 2023 (rehab and org depth — Story, Kluber, " +
+      "Whitlock, Bleier, Reyes, Chang, Schreiber, Rodríguez, Kelly, Sharp). The bars split those out: the " +
+      "left value is the count including the vets, the right value is prospects only — the honest number.",
+    footnote:
+      "Cohort counts and per-year stops from MLB StatsAPI (fullSeason team rosters and mlbDebutDate hydration, " +
+      "2023–26). Named-player narratives cross-checked against MiLB.com and public reporting. Re-runnable: " +
+      "`uv run python data/fetch_seadogs_cohort.py`.",
+    sankeyTitle: "The 2026 Red Sox — one strand per named player",
+    sankeyCaption:
+      "22 current-team names (the 2026 deadline pickups plus 18 other contributors) routed through their " +
+      "last stop before Boston. Portland → Worcester on the pipeline lane; Trade, Free agent, Int'l posting " +
+      "and Rule 5 as direct predecessor bands. Strand color marks the entry lane; hover, click, or use the " +
+      "dropdown to pin one and read the timeline.",
+  },
 };
