@@ -7,4 +7,13 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   base: './',
   plugins: [react(), tailwindcss()],
+  build: {
+    rollupOptions: {
+      // Two pages: the Fenway spray charts and the fantasy-league standings.
+      input: {
+        main: new URL('./index.html', import.meta.url).pathname,
+        league: new URL('./league.html', import.meta.url).pathname,
+      },
+    },
+  },
 })
