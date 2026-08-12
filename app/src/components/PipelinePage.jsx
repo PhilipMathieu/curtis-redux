@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { COPY } from "../copy.js";
+import COHORT_DATA from "../pipeline_cohort.json";
 
 // Every player on the 2026 Red Sox roster the site tells a story about,
 // unified into one shape: source lane, stops that go through the
@@ -654,20 +655,22 @@ function DetailCard({ p }) {
   );
 }
 
-// Compact aggregate funnel — the illustrative cohort ("100 → 45 → 18 → 7")
-// that sets the scene before the strand Sankey pulls in individual paths.
+// Real cohort funnel — every player on the 2023 Portland Sea Dogs
+// full-season roster, followed forward through 2026 via MLB StatsAPI
+// (see data/fetch_seadogs_cohort.py).
 function CohortStrip() {
+  const s = COHORT_DATA.summary;
   const cells = [
-    { label: "Sea Dogs", sub: "AA cohort", value: 100 },
-    { label: "Worcester", sub: "AAA cohort", value: 45 },
-    { label: "Boston debut", sub: "MLB call-up", value: 18 },
-    { label: "Sticks in Boston", sub: "regular role", value: 7 },
+    { label: `${s.cohort_season} Sea Dogs`, sub: "AA full-season roster", value: s.cohort_size },
+    { label: "Reached Worcester", sub: "BOS AAA, 2023–26", value: s.reached_woo },
+    { label: "Reached MLB", sub: "any team, 2023–26", value: s.reached_mlb_any },
+    { label: "Reached MLB Boston", sub: "wearing the Sox", value: s.reached_mlb_bos },
   ];
   const max = cells[0].value;
   return (
     <div className="rounded border border-gray-200 bg-white p-3 shadow-sm">
       <div className="mb-1 text-[11px] font-medium uppercase tracking-widest text-gray-500">
-        A typical cohort, three years out
+        {COPY.pipeline.funnelTitle}
       </div>
       <p className="mt-0 mb-2 text-[11px] leading-snug text-gray-500">
         {COPY.pipeline.funnelCaption}
@@ -677,10 +680,10 @@ function CohortStrip() {
           <div key={c.label} className="flex flex-1 flex-col items-center">
             <div
               className="w-full rounded-sm bg-primary-500"
-              style={{ height: `${(c.value / max) * 68}px`, opacity: 0.9 - i * 0.1 }}
-              title={`${c.value} of every 100`}
+              style={{ height: `${(c.value / max) * 88}px`, opacity: 0.95 - i * 0.12 }}
+              title={`${c.value} of ${max}`}
             />
-            <div className="mt-1 font-mono text-[12px] font-semibold text-gray-800">{c.value}</div>
+            <div className="mt-1 font-mono text-[16px] font-semibold text-gray-800">{c.value}</div>
             <div className="text-center text-[10px] font-medium uppercase tracking-wider text-gray-500">
               {c.label}
             </div>
@@ -688,6 +691,69 @@ function CohortStrip() {
           </div>
         ))}
       </div>
+    </div>
+  );
+}
+
+// The 2023 cohort's own names, faceted by outcome. Rendered under the
+// strip so the reader can see who those numbers actually are.
+function CohortNames() {
+  // Four disjoint buckets that partition the cohort — no player appears
+  // in more than one row.
+  const bosPlayers = COHORT_DATA.players.filter((p) => p.reached_mlb_bos);
+  const elsewherePlayers = COHORT_DATA.players.filter((p) => p.reached_mlb_any && !p.reached_mlb_bos);
+  const wooOnly = COHORT_DATA.players.filter((p) => p.reached_woo && !p.reached_mlb_any);
+  const stalled = COHORT_DATA.players.filter((p) => !p.reached_woo && !p.reached_mlb_any);
+
+  const Section = ({ title, sub, list, tint }) =>
+    list.length === 0 ? null : (
+      <div className="rounded border border-gray-200 bg-white p-3">
+        <div className="mb-1 flex items-baseline justify-between gap-2">
+          <div className="text-[11px] font-semibold uppercase tracking-widest text-gray-700">{title}</div>
+          <div className="font-mono text-[11px] text-gray-500">{list.length}</div>
+        </div>
+        <div className="mb-2 text-[11px] leading-snug text-gray-500">{sub}</div>
+        <div className="flex flex-wrap gap-1">
+          {list.map((p) => (
+            <span
+              key={p.id}
+              className="rounded-sm px-1.5 py-0.5 text-[11px] text-gray-700"
+              style={{ background: tint }}
+              title={`${p.name} · ${p.pos}`}
+            >
+              {p.name}
+            </span>
+          ))}
+        </div>
+      </div>
+    );
+
+  return (
+    <div className="grid gap-2 sm:grid-cols-2">
+      <Section
+        title="Made it to Boston"
+        sub="On the Red Sox MLB roster in a 2023–26 season (includes rehab veterans on the Sea Dogs that year)."
+        list={bosPlayers}
+        tint="rgba(206,17,45,0.14)"
+      />
+      <Section
+        title="Made the majors elsewhere"
+        sub="Traded (Crochet return, Contreras deal, etc.) or claimed off the org and debuted for another team."
+        list={elsewherePlayers}
+        tint="rgba(21,128,176,0.14)"
+      />
+      <Section
+        title="Reached Triple-A only"
+        sub="Cleared AA, made Worcester, no MLB call-up yet."
+        list={wooOnly}
+        tint="rgba(184,134,11,0.14)"
+      />
+      <Section
+        title="Capped at Double-A"
+        sub="Never crossed into Worcester through 2026."
+        list={stalled}
+        tint="rgba(102,102,102,0.14)"
+      />
     </div>
   );
 }
@@ -705,8 +771,11 @@ export default function PipelinePage() {
         <p className="mt-2 mb-0 text-gray-600">{COPY.pipeline.dek}</p>
       </header>
 
-      <div className="mb-5">
+      <div className="mb-3">
         <CohortStrip />
+      </div>
+      <div className="mb-5">
+        <CohortNames />
       </div>
 
       <section

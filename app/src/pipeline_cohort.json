@@ -1,0 +1,2476 @@
+{
+  "summary": {
+    "cohort_season": 2023,
+    "track_seasons": [
+      2023,
+      2024,
+      2025,
+      2026
+    ],
+    "cohort_size": 59,
+    "reached_woo": 47,
+    "reached_mlb_any": 28,
+    "reached_mlb_bos": 14
+  },
+  "players": [
+    {
+      "id": 678882,
+      "name": "Ceddanne Rafaela",
+      "pos": "OF",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            },
+            {
+              "level": "MLB",
+              "team": "Boston Red Sox"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "stops": [
+            {
+              "level": "MLB",
+              "team": "Boston Red Sox"
+            }
+          ]
+        },
+        {
+          "season": 2025,
+          "stops": [
+            {
+              "level": "MLB",
+              "team": "Boston Red Sox"
+            }
+          ]
+        },
+        {
+          "season": 2026,
+          "stops": [
+            {
+              "level": "MLB",
+              "team": "Boston Red Sox"
+            }
+          ]
+        }
+      ],
+      "reached_woo": true,
+      "reached_mlb_any": true,
+      "reached_mlb_bos": true
+    },
+    {
+      "id": 446372,
+      "name": "Corey Kluber",
+      "pos": "P",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            },
+            {
+              "level": "MLB",
+              "team": "Boston Red Sox"
+            }
+          ]
+        }
+      ],
+      "reached_woo": true,
+      "reached_mlb_any": true,
+      "reached_mlb_bos": true
+    },
+    {
+      "id": 676477,
+      "name": "Garrett Whitlock",
+      "pos": "P",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            },
+            {
+              "level": "MLB",
+              "team": "Boston Red Sox"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "MLB",
+              "team": "Boston Red Sox"
+            }
+          ]
+        },
+        {
+          "season": 2025,
+          "stops": [
+            {
+              "level": "MLB",
+              "team": "Boston Red Sox"
+            }
+          ]
+        },
+        {
+          "season": 2026,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "MLB",
+              "team": "Boston Red Sox"
+            }
+          ]
+        }
+      ],
+      "reached_woo": true,
+      "reached_mlb_any": true,
+      "reached_mlb_bos": true
+    },
+    {
+      "id": 690928,
+      "name": "Hunter Dobbins",
+      "pos": "P",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            },
+            {
+              "level": "A+",
+              "team": "Greenville Drive"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        },
+        {
+          "season": 2025,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            },
+            {
+              "level": "MLB",
+              "team": "Boston Red Sox"
+            }
+          ]
+        },
+        {
+          "season": 2026,
+          "stops": [
+            {
+              "level": "MLB",
+              "team": "St. Louis Cardinals"
+            }
+          ]
+        }
+      ],
+      "reached_woo": true,
+      "reached_mlb_any": true,
+      "reached_mlb_bos": true
+    },
+    {
+      "id": 570257,
+      "name": "Joely Rodr\u00edguez",
+      "pos": "P",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            },
+            {
+              "level": "MLB",
+              "team": "Boston Red Sox"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "MLB",
+              "team": "Boston Red Sox"
+            }
+          ]
+        }
+      ],
+      "reached_woo": true,
+      "reached_mlb_any": true,
+      "reached_mlb_bos": true
+    },
+    {
+      "id": 670167,
+      "name": "John Schreiber",
+      "pos": "P",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            },
+            {
+              "level": "MLB",
+              "team": "Boston Red Sox"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "stops": [
+            {
+              "level": "MLB",
+              "team": "Kansas City Royals"
+            }
+          ]
+        },
+        {
+          "season": 2025,
+          "stops": [
+            {
+              "level": "MLB",
+              "team": "Kansas City Royals"
+            }
+          ]
+        },
+        {
+          "season": 2026,
+          "stops": [
+            {
+              "level": "MLB",
+              "team": "Kansas City Royals"
+            }
+          ]
+        }
+      ],
+      "reached_woo": true,
+      "reached_mlb_any": true,
+      "reached_mlb_bos": true
+    },
+    {
+      "id": 692285,
+      "name": "Luis Guerrero",
+      "pos": "P",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "MLB",
+              "team": "Boston Red Sox"
+            }
+          ]
+        },
+        {
+          "season": 2025,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            },
+            {
+              "level": "A+",
+              "team": "Greenville Drive"
+            },
+            {
+              "level": "MLB",
+              "team": "Boston Red Sox"
+            }
+          ]
+        }
+      ],
+      "reached_woo": true,
+      "reached_mlb_any": true,
+      "reached_mlb_bos": true
+    },
+    {
+      "id": 691785,
+      "name": "Marcelo Mayer",
+      "pos": "SS",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            },
+            {
+              "level": "A+",
+              "team": "Greenville Drive"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "stops": [
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        },
+        {
+          "season": 2025,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "MLB",
+              "team": "Boston Red Sox"
+            }
+          ]
+        },
+        {
+          "season": 2026,
+          "stops": [
+            {
+              "level": "MLB",
+              "team": "Boston Red Sox"
+            }
+          ]
+        }
+      ],
+      "reached_woo": true,
+      "reached_mlb_any": true,
+      "reached_mlb_bos": true
+    },
+    {
+      "id": 622569,
+      "name": "Pablo Reyes",
+      "pos": "2B",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            },
+            {
+              "level": "MLB",
+              "team": "Boston Red Sox"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "MLB",
+              "team": "New York Mets"
+            }
+          ]
+        },
+        {
+          "season": 2025,
+          "stops": [
+            {
+              "level": "MLB",
+              "team": "New York Yankees"
+            }
+          ]
+        }
+      ],
+      "reached_woo": true,
+      "reached_mlb_any": true,
+      "reached_mlb_bos": true
+    },
+    {
+      "id": 542947,
+      "name": "Richard Bleier",
+      "pos": "P",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            },
+            {
+              "level": "MLB",
+              "team": "Boston Red Sox"
+            }
+          ]
+        }
+      ],
+      "reached_woo": true,
+      "reached_mlb_any": true,
+      "reached_mlb_bos": true
+    },
+    {
+      "id": 701350,
+      "name": "Roman Anthony",
+      "pos": "CF",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            },
+            {
+              "level": "A+",
+              "team": "Greenville Drive"
+            },
+            {
+              "level": "A",
+              "team": "Salem Red Sox"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        },
+        {
+          "season": 2025,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "MLB",
+              "team": "Boston Red Sox"
+            }
+          ]
+        },
+        {
+          "season": 2026,
+          "stops": [
+            {
+              "level": "MLB",
+              "team": "Boston Red Sox"
+            }
+          ]
+        }
+      ],
+      "reached_woo": true,
+      "reached_mlb_any": true,
+      "reached_mlb_bos": true
+    },
+    {
+      "id": 596115,
+      "name": "Trevor Story",
+      "pos": "SS",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            },
+            {
+              "level": "MLB",
+              "team": "Boston Red Sox"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "MLB",
+              "team": "Boston Red Sox"
+            }
+          ]
+        },
+        {
+          "season": 2025,
+          "stops": [
+            {
+              "level": "MLB",
+              "team": "Boston Red Sox"
+            }
+          ]
+        },
+        {
+          "season": 2026,
+          "stops": [
+            {
+              "level": "MLB",
+              "team": "Boston Red Sox"
+            }
+          ]
+        }
+      ],
+      "reached_woo": true,
+      "reached_mlb_any": true,
+      "reached_mlb_bos": true
+    },
+    {
+      "id": 644374,
+      "name": "Yu Chang",
+      "pos": "SS",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            },
+            {
+              "level": "MLB",
+              "team": "Boston Red Sox"
+            }
+          ]
+        }
+      ],
+      "reached_woo": true,
+      "reached_mlb_any": true,
+      "reached_mlb_bos": true
+    },
+    {
+      "id": 677161,
+      "name": "Zack Kelly",
+      "pos": "P",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            },
+            {
+              "level": "A+",
+              "team": "Greenville Drive"
+            },
+            {
+              "level": "A",
+              "team": "Salem Red Sox"
+            },
+            {
+              "level": "MLB",
+              "team": "Boston Red Sox"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "MLB",
+              "team": "Boston Red Sox"
+            }
+          ]
+        },
+        {
+          "season": 2025,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "A+",
+              "team": "Greenville Drive"
+            },
+            {
+              "level": "MLB",
+              "team": "Boston Red Sox"
+            }
+          ]
+        },
+        {
+          "season": 2026,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "MLB",
+              "team": "Boston Red Sox"
+            }
+          ]
+        }
+      ],
+      "reached_woo": true,
+      "reached_mlb_any": true,
+      "reached_mlb_bos": true
+    },
+    {
+      "id": 695380,
+      "name": "Alex Hoppe",
+      "pos": "P",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            },
+            {
+              "level": "A+",
+              "team": "Greenville Drive"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "stops": [
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        },
+        {
+          "season": 2025,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        },
+        {
+          "season": 2026,
+          "stops": [
+            {
+              "level": "MLB",
+              "team": "Baltimore Orioles"
+            }
+          ]
+        }
+      ],
+      "reached_woo": true,
+      "reached_mlb_any": true,
+      "reached_mlb_bos": false
+    },
+    {
+      "id": 691458,
+      "name": "Blaze Jordan",
+      "pos": "1B",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            },
+            {
+              "level": "A+",
+              "team": "Greenville Drive"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "stops": [
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        },
+        {
+          "season": 2025,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        },
+        {
+          "season": 2026,
+          "stops": [
+            {
+              "level": "MLB",
+              "team": "St. Louis Cardinals"
+            }
+          ]
+        }
+      ],
+      "reached_woo": true,
+      "reached_mlb_any": true,
+      "reached_mlb_bos": false
+    },
+    {
+      "id": 687003,
+      "name": "Brian Van Belle",
+      "pos": "P",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            }
+          ]
+        },
+        {
+          "season": 2025,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "MLB",
+              "team": "Tampa Bay Rays"
+            }
+          ]
+        }
+      ],
+      "reached_woo": true,
+      "reached_mlb_any": true,
+      "reached_mlb_bos": false
+    },
+    {
+      "id": 805367,
+      "name": "Chase Meidroth",
+      "pos": "3B",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            },
+            {
+              "level": "A+",
+              "team": "Greenville Drive"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            }
+          ]
+        },
+        {
+          "season": 2025,
+          "stops": [
+            {
+              "level": "MLB",
+              "team": "Chicago White Sox"
+            }
+          ]
+        },
+        {
+          "season": 2026,
+          "stops": [
+            {
+              "level": "MLB",
+              "team": "Chicago White Sox"
+            }
+          ]
+        }
+      ],
+      "reached_woo": true,
+      "reached_mlb_any": true,
+      "reached_mlb_bos": false
+    },
+    {
+      "id": 683766,
+      "name": "Christian Koss",
+      "pos": "SS",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            },
+            {
+              "level": "R (FCL)",
+              "team": "FCL Red Sox"
+            }
+          ]
+        },
+        {
+          "season": 2025,
+          "stops": [
+            {
+              "level": "MLB",
+              "team": "San Francisco Giants"
+            }
+          ]
+        },
+        {
+          "season": 2026,
+          "stops": [
+            {
+              "level": "MLB",
+              "team": "San Francisco Giants"
+            }
+          ]
+        }
+      ],
+      "reached_woo": true,
+      "reached_mlb_any": true,
+      "reached_mlb_bos": false
+    },
+    {
+      "id": 691019,
+      "name": "Kyle Teel",
+      "pos": "C",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            },
+            {
+              "level": "A+",
+              "team": "Greenville Drive"
+            },
+            {
+              "level": "R (FCL)",
+              "team": "FCL Red Sox"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        },
+        {
+          "season": 2025,
+          "stops": [
+            {
+              "level": "MLB",
+              "team": "Chicago White Sox"
+            }
+          ]
+        },
+        {
+          "season": 2026,
+          "stops": [
+            {
+              "level": "MLB",
+              "team": "Chicago White Sox"
+            }
+          ]
+        }
+      ],
+      "reached_woo": true,
+      "reached_mlb_any": true,
+      "reached_mlb_bos": false
+    },
+    {
+      "id": 683090,
+      "name": "Matthew Lugo",
+      "pos": "3B",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        },
+        {
+          "season": 2025,
+          "stops": [
+            {
+              "level": "MLB",
+              "team": "Los Angeles Angels"
+            }
+          ]
+        }
+      ],
+      "reached_woo": true,
+      "reached_mlb_any": true,
+      "reached_mlb_bos": false
+    },
+    {
+      "id": 694377,
+      "name": "Nick Yorke",
+      "pos": "2B",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            },
+            {
+              "level": "MLB",
+              "team": "Pittsburgh Pirates"
+            }
+          ]
+        },
+        {
+          "season": 2025,
+          "stops": [
+            {
+              "level": "MLB",
+              "team": "Pittsburgh Pirates"
+            }
+          ]
+        },
+        {
+          "season": 2026,
+          "stops": [
+            {
+              "level": "MLB",
+              "team": "Pittsburgh Pirates"
+            }
+          ]
+        }
+      ],
+      "reached_woo": true,
+      "reached_mlb_any": true,
+      "reached_mlb_bos": false
+    },
+    {
+      "id": 694359,
+      "name": "Niko Kavadas",
+      "pos": "1B",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "MLB",
+              "team": "Los Angeles Angels"
+            }
+          ]
+        },
+        {
+          "season": 2025,
+          "stops": [
+            {
+              "level": "MLB",
+              "team": "Los Angeles Angels"
+            }
+          ]
+        }
+      ],
+      "reached_woo": true,
+      "reached_mlb_any": true,
+      "reached_mlb_bos": false
+    },
+    {
+      "id": 681676,
+      "name": "Ryan Fernandez",
+      "pos": "P",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            },
+            {
+              "level": "A",
+              "team": "Salem Red Sox"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "stops": [
+            {
+              "level": "MLB",
+              "team": "St. Louis Cardinals"
+            }
+          ]
+        },
+        {
+          "season": 2025,
+          "stops": [
+            {
+              "level": "MLB",
+              "team": "St. Louis Cardinals"
+            }
+          ]
+        },
+        {
+          "season": 2026,
+          "stops": [
+            {
+              "level": "MLB",
+              "team": "St. Louis Cardinals"
+            }
+          ]
+        }
+      ],
+      "reached_woo": true,
+      "reached_mlb_any": true,
+      "reached_mlb_bos": false
+    },
+    {
+      "id": 666171,
+      "name": "Ryan Zeferjahn",
+      "pos": "P",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            },
+            {
+              "level": "A",
+              "team": "Salem Red Sox"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            },
+            {
+              "level": "MLB",
+              "team": "Los Angeles Angels"
+            }
+          ]
+        },
+        {
+          "season": 2025,
+          "stops": [
+            {
+              "level": "MLB",
+              "team": "Los Angeles Angels"
+            }
+          ]
+        },
+        {
+          "season": 2026,
+          "stops": [
+            {
+              "level": "MLB",
+              "team": "Chicago Cubs"
+            }
+          ]
+        }
+      ],
+      "reached_woo": true,
+      "reached_mlb_any": true,
+      "reached_mlb_bos": false
+    },
+    {
+      "id": 675660,
+      "name": "Shane Drohan",
+      "pos": "P",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            }
+          ]
+        },
+        {
+          "season": 2025,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "A+",
+              "team": "Greenville Drive"
+            }
+          ]
+        },
+        {
+          "season": 2026,
+          "stops": [
+            {
+              "level": "MLB",
+              "team": "Milwaukee Brewers"
+            }
+          ]
+        }
+      ],
+      "reached_woo": true,
+      "reached_mlb_any": true,
+      "reached_mlb_bos": false
+    },
+    {
+      "id": 668943,
+      "name": "Ryan Miller",
+      "pos": "P",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "stops": [
+            {
+              "level": "MLB",
+              "team": "Los Angeles Angels"
+            }
+          ]
+        }
+      ],
+      "reached_woo": false,
+      "reached_mlb_any": true,
+      "reached_mlb_bos": false
+    },
+    {
+      "id": 682790,
+      "name": "Wikelman Gonz\u00e1lez",
+      "pos": "P",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            },
+            {
+              "level": "A+",
+              "team": "Greenville Drive"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "stops": [
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        },
+        {
+          "season": 2025,
+          "stops": [
+            {
+              "level": "MLB",
+              "team": "Chicago White Sox"
+            }
+          ]
+        }
+      ],
+      "reached_woo": false,
+      "reached_mlb_any": true,
+      "reached_mlb_bos": false
+    },
+    {
+      "id": 681323,
+      "name": "Alex Binelas",
+      "pos": "1B",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        },
+        {
+          "season": 2025,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            }
+          ]
+        }
+      ],
+      "reached_woo": true,
+      "reached_mlb_any": false,
+      "reached_mlb_bos": false
+    },
+    {
+      "id": 682785,
+      "name": "Angel Bastardo",
+      "pos": "P",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            },
+            {
+              "level": "A+",
+              "team": "Greenville Drive"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "stops": [
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        },
+        {
+          "season": 2026,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            }
+          ]
+        }
+      ],
+      "reached_woo": true,
+      "reached_mlb_any": false,
+      "reached_mlb_bos": false
+    },
+    {
+      "id": 676454,
+      "name": "Brendan Cellucci",
+      "pos": "P",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        },
+        {
+          "season": 2025,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        }
+      ],
+      "reached_woo": true,
+      "reached_mlb_any": false,
+      "reached_mlb_bos": false
+    },
+    {
+      "id": 678041,
+      "name": "Brendan Nail",
+      "pos": "P",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        }
+      ],
+      "reached_woo": true,
+      "reached_mlb_any": false,
+      "reached_mlb_bos": false
+    },
+    {
+      "id": 667414,
+      "name": "Cody Scroggins",
+      "pos": "P",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            },
+            {
+              "level": "A",
+              "team": "Salem Red Sox"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        }
+      ],
+      "reached_woo": true,
+      "reached_mlb_any": false,
+      "reached_mlb_bos": false
+    },
+    {
+      "id": 681468,
+      "name": "Corey Rosier",
+      "pos": "OF",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        },
+        {
+          "season": 2025,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        }
+      ],
+      "reached_woo": true,
+      "reached_mlb_any": false,
+      "reached_mlb_bos": false
+    },
+    {
+      "id": 641521,
+      "name": "Edwin D\u00edaz",
+      "pos": "3B",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        }
+      ],
+      "reached_woo": true,
+      "reached_mlb_any": false,
+      "reached_mlb_bos": false
+    },
+    {
+      "id": 663503,
+      "name": "Elih Marrero",
+      "pos": "C",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        }
+      ],
+      "reached_woo": true,
+      "reached_mlb_any": false,
+      "reached_mlb_bos": false
+    },
+    {
+      "id": 669183,
+      "name": "Grant Gambrell",
+      "pos": "P",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            },
+            {
+              "level": "A+",
+              "team": "Greenville Drive"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            }
+          ]
+        }
+      ],
+      "reached_woo": true,
+      "reached_mlb_any": false,
+      "reached_mlb_bos": false
+    },
+    {
+      "id": 806190,
+      "name": "Isaac Coffey",
+      "pos": "P",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            },
+            {
+              "level": "A+",
+              "team": "Greenville Drive"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "stops": [
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        },
+        {
+          "season": 2025,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        },
+        {
+          "season": 2026,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        }
+      ],
+      "reached_woo": true,
+      "reached_mlb_any": false,
+      "reached_mlb_bos": false
+    },
+    {
+      "id": 701288,
+      "name": "Jacob Webb",
+      "pos": "P",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        },
+        {
+          "season": 2025,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            },
+            {
+              "level": "A+",
+              "team": "Greenville Drive"
+            }
+          ]
+        },
+        {
+          "season": 2026,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            }
+          ]
+        }
+      ],
+      "reached_woo": true,
+      "reached_mlb_any": false,
+      "reached_mlb_bos": false
+    },
+    {
+      "id": 687208,
+      "name": "Nathan Hickey",
+      "pos": "C",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            },
+            {
+              "level": "A+",
+              "team": "Greenville Drive"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        },
+        {
+          "season": 2025,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            }
+          ]
+        },
+        {
+          "season": 2026,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            }
+          ]
+        }
+      ],
+      "reached_woo": true,
+      "reached_mlb_any": false,
+      "reached_mlb_bos": false
+    },
+    {
+      "id": 689651,
+      "name": "Phillip Sikes",
+      "pos": "CF",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        },
+        {
+          "season": 2025,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            }
+          ]
+        }
+      ],
+      "reached_woo": true,
+      "reached_mlb_any": false,
+      "reached_mlb_bos": false
+    },
+    {
+      "id": 677013,
+      "name": "Rio Gomez",
+      "pos": "P",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        }
+      ],
+      "reached_woo": true,
+      "reached_mlb_any": false,
+      "reached_mlb_bos": false
+    },
+    {
+      "id": 688984,
+      "name": "Robert Kwiatkowski",
+      "pos": "P",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            },
+            {
+              "level": "A+",
+              "team": "Greenville Drive"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        }
+      ],
+      "reached_woo": true,
+      "reached_mlb_any": false,
+      "reached_mlb_bos": false
+    },
+    {
+      "id": 679663,
+      "name": "Stephen Scott",
+      "pos": "C",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        }
+      ],
+      "reached_woo": true,
+      "reached_mlb_any": false,
+      "reached_mlb_bos": false
+    },
+    {
+      "id": 699479,
+      "name": "Taylor Broadway",
+      "pos": "P",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        }
+      ],
+      "reached_woo": true,
+      "reached_mlb_any": false,
+      "reached_mlb_bos": false
+    },
+    {
+      "id": 690281,
+      "name": "Theo Denlinger",
+      "pos": "P",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "stops": [
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        }
+      ],
+      "reached_woo": true,
+      "reached_mlb_any": false,
+      "reached_mlb_bos": false
+    },
+    {
+      "id": 676280,
+      "name": "Tyler Dearden",
+      "pos": "RF",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        }
+      ],
+      "reached_woo": true,
+      "reached_mlb_any": false,
+      "reached_mlb_bos": false
+    },
+    {
+      "id": 694812,
+      "name": "Tyler McDonough",
+      "pos": "OF",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        },
+        {
+          "season": 2025,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            }
+          ]
+        },
+        {
+          "season": 2026,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        }
+      ],
+      "reached_woo": true,
+      "reached_mlb_any": false,
+      "reached_mlb_bos": false
+    },
+    {
+      "id": 681544,
+      "name": "Wyatt Olds",
+      "pos": "P",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            },
+            {
+              "level": "R (FCL)",
+              "team": "FCL Red Sox"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        },
+        {
+          "season": 2025,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            },
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        },
+        {
+          "season": 2026,
+          "stops": [
+            {
+              "level": "AAA",
+              "team": "Worcester Red Sox"
+            }
+          ]
+        }
+      ],
+      "reached_woo": true,
+      "reached_mlb_any": false,
+      "reached_mlb_bos": false
+    },
+    {
+      "id": 690622,
+      "name": "Alex Erro",
+      "pos": "C",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            },
+            {
+              "level": "A+",
+              "team": "Greenville Drive"
+            }
+          ]
+        }
+      ],
+      "reached_woo": false,
+      "reached_mlb_any": false,
+      "reached_mlb_bos": false
+    },
+    {
+      "id": 682900,
+      "name": "Brainer Bonaci",
+      "pos": "SS",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            },
+            {
+              "level": "A+",
+              "team": "Greenville Drive"
+            }
+          ]
+        }
+      ],
+      "reached_woo": false,
+      "reached_mlb_any": false,
+      "reached_mlb_bos": false
+    },
+    {
+      "id": 692617,
+      "name": "Chih-Jung Liu",
+      "pos": "P",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "stops": [
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            },
+            {
+              "level": "R (FCL)",
+              "team": "FCL Red Sox"
+            }
+          ]
+        }
+      ],
+      "reached_woo": false,
+      "reached_mlb_any": false,
+      "reached_mlb_bos": false
+    },
+    {
+      "id": 671220,
+      "name": "Christopher Troye",
+      "pos": "P",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            },
+            {
+              "level": "A+",
+              "team": "Greenville Drive"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "stops": [
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        },
+        {
+          "season": 2025,
+          "stops": [
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        }
+      ],
+      "reached_woo": false,
+      "reached_mlb_any": false,
+      "reached_mlb_bos": false
+    },
+    {
+      "id": 686679,
+      "name": "Dylan Spacke",
+      "pos": "P",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        }
+      ],
+      "reached_woo": false,
+      "reached_mlb_any": false,
+      "reached_mlb_bos": false
+    },
+    {
+      "id": 691839,
+      "name": "Joe Jones",
+      "pos": "P",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            },
+            {
+              "level": "A+",
+              "team": "Greenville Drive"
+            }
+          ]
+        }
+      ],
+      "reached_woo": false,
+      "reached_mlb_any": false,
+      "reached_mlb_bos": false
+    },
+    {
+      "id": 804596,
+      "name": "Matt Donlan",
+      "pos": "C",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            },
+            {
+              "level": "A+",
+              "team": "Greenville Drive"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "stops": [
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        }
+      ],
+      "reached_woo": false,
+      "reached_mlb_any": false,
+      "reached_mlb_bos": false
+    },
+    {
+      "id": 670404,
+      "name": "Skylar Arias",
+      "pos": "P",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        }
+      ],
+      "reached_woo": false,
+      "reached_mlb_any": false,
+      "reached_mlb_bos": false
+    },
+    {
+      "id": 643532,
+      "name": "Sterling Sharp",
+      "pos": "P",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            }
+          ]
+        }
+      ],
+      "reached_woo": false,
+      "reached_mlb_any": false,
+      "reached_mlb_bos": false
+    },
+    {
+      "id": 676613,
+      "name": "Tyler Esplin",
+      "pos": "1B",
+      "path": [
+        {
+          "season": 2023,
+          "stops": [
+            {
+              "level": "AA",
+              "team": "Portland Sea Dogs"
+            },
+            {
+              "level": "A+",
+              "team": "Greenville Drive"
+            }
+          ]
+        }
+      ],
+      "reached_woo": false,
+      "reached_mlb_any": false,
+      "reached_mlb_bos": false
+    }
+  ]
+}

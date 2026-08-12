@@ -123,15 +123,16 @@ export const COPY = {
       "Boston's 2026 deadline pickups slot in beside a core that walked the same three-city path: " +
       "Double-A Portland, Triple-A Worcester, then the majors. Here is how narrow the last two doors are, " +
       "and who this year's Red Sox are because they got through them.",
-    funnelTitle: "A typical cohort, three years out",
+    funnelTitle: "The 2023 Sea Dogs cohort, three seasons on",
     funnelCaption:
-      "Take everyone who wears a Sea Dogs uniform in a given season — the top prospects, the org depth, " +
-      "the passing veterans on rehab. Roughly this many still have a Red Sox future two levels later. " +
-      "Bands are illustrative, drawn from how affiliated-baseball cohorts typically thin out, not a Boston-specific audit; " +
-      "the point is the shape of the funnel, not the decimal.",
+      "Actual MLB StatsAPI counts, not an approximation: every player on Portland's 2023 full-season roster, " +
+      "tracked forward through 2026 to see who reached Triple-A Worcester, who broke into the majors — anywhere " +
+      "— and who wound up in Boston. Rehab veterans (Story, Kluber, Bleier) do count in the cohort; they were " +
+      "on the Sea Dogs' full-season roster.",
     footnote:
-      "Player paths are from MiLB.com and public reporting; cohort widths are an industry-shape " +
-      "approximation, not a per-year Boston tally. The map is the road; every player runs it at their own pace.",
+      "Cohort counts and per-year stops from MLB StatsAPI (fullSeason team rosters, 2023–26). " +
+      "Named-player narratives cross-checked against MiLB.com and public reporting. Re-runnable: " +
+      "`uv run python data/fetch_seadogs_cohort.py`.",
     columnLabels: {
       seadogs: "Portland Sea Dogs",
       seadogsSub: "Double-A",
