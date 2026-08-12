@@ -79,6 +79,102 @@ const NARRATIVES = [
   },
 ];
 
+// Everyone on the current MLB roster who arrived from outside the org — no
+// Portland or Worcester line on their card. Sources for each are the linked
+// reports in the PR description; dates are month/year of the move to Boston.
+const OUTSIDE = [
+  // Winter trades — the rotation this team was built around.
+  {
+    name: "Garrett Crochet",
+    pos: "LHP",
+    route: "trade",
+    from: "from Chicago (AL) — Dec 2024",
+    line:
+      "For Teel, Montgomery, Meidroth and Wikelman Gonzalez — the biggest single deal " +
+      "of the winter, and the ace this rotation was built around.",
+  },
+  {
+    name: "Sonny Gray",
+    pos: "RHP",
+    route: "trade",
+    from: "from St. Louis — Nov 2025",
+    line:
+      "For Richard Fitts and Brandon Clarke. Three-time All-Star, Cy Young runner-up in 2023, " +
+      "slotted in behind Crochet.",
+  },
+  {
+    name: "Willson Contreras",
+    pos: "1B / DH",
+    route: "trade",
+    from: "from St. Louis — winter 2025–26",
+    line:
+      "Cardinals-to-Boston in a separate deal (Hunter Dobbins the other way) that gave " +
+      "the middle of the order a legit veteran bat.",
+  },
+  {
+    name: "Johan Oviedo",
+    pos: "RHP",
+    route: "trade",
+    from: "acquired winter 2025–26",
+    line: "One of the three rotation moves alongside Gray and Suárez; back-end depth after Tommy John recovery.",
+  },
+  // Free-agent bats and arms.
+  {
+    name: "Ranger Suárez",
+    pos: "LHP",
+    route: "fa",
+    from: "5 yr / $130M — Jan 2026",
+    line:
+      "Eight years in Philadelphia, then Boston's biggest free-agent pitching splash of the winter. " +
+      "12–8, 3.20 ERA in his last Phillies season.",
+  },
+  {
+    name: "Trevor Story",
+    pos: "SS",
+    route: "fa",
+    from: "6 yr / $140M — Mar 2022",
+    line:
+      "The Chaim Bloom-era gamble that finally started paying full postseason dividends in 2026 — " +
+      "still holding down the left side of the infield.",
+  },
+  {
+    name: "Aroldis Chapman",
+    pos: "LHP",
+    route: "fa",
+    from: "1 yr / $10.75M — Dec 2024, extended '25",
+    line:
+      "Signed cheap as a bounce-back, ran a 1.02 ERA and 27 saves in his first season, " +
+      "re-upped through 2026 in-season.",
+  },
+  {
+    name: "Isiah Kiner-Falefa",
+    pos: "IF / OF",
+    route: "fa",
+    from: "1 yr / $6M — Feb 2026",
+    line:
+      "Late-winter depth signing: shortstop, third, second and outfield all in the same week if the day calls for it.",
+  },
+  {
+    name: "Masataka Yoshida",
+    pos: "OF / DH",
+    route: "intl",
+    from: "posted from NPB — Dec 2022",
+    line:
+      "Five-year, $90M contract straight out of the Orix Buffaloes — the org's first big move " +
+      "into the Japanese posting market since Daisuke.",
+  },
+  // Rule 5.
+  {
+    name: "Justin Slaten",
+    pos: "RHP",
+    route: "rule5",
+    from: "Rule 5 via Mets — Dec 2023",
+    line:
+      "Selected by New York out of Texas's system, then flipped to Boston for Ryan Ammons and cash. " +
+      "Stuck the whole rookie season (2.93 ERA) — the second coming of the Whitlock trick.",
+  },
+];
+
 // Aggregate cohort widths — illustrative shape, not a per-year Boston audit.
 // Chosen so the funnel reads honestly at a glance: about half of AA gets to
 // AAA, about a third of AAA gets an MLB debut, less than half of debuts stick.
@@ -324,6 +420,26 @@ function NarrativeCard({ n }) {
   );
 }
 
+// A card for a player who arrived from outside the org — the SEA→WOO→BOS
+// glyph is replaced with a single "route" chip (TRADE / FA / RULE 5 / INT'L).
+function OutsideCard({ n }) {
+  return (
+    <article className="rounded border border-gray-200 bg-white p-4 shadow-sm">
+      <header className="mb-2 flex items-baseline justify-between gap-2">
+        <div>
+          <div className="font-serif text-lg font-semibold text-gray-800">{n.name}</div>
+          <div className="text-[11px] uppercase tracking-wider text-gray-500">{n.pos}</div>
+        </div>
+        <span className="rounded-sm bg-gray-200 px-2 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-wider text-gray-600">
+          {COPY.pipeline.routeLabels[n.route]}
+        </span>
+      </header>
+      <div className="mb-2 text-[11px] font-medium text-gray-500">→ {n.from}</div>
+      <p className="mb-0 text-[13px] leading-snug text-gray-600">{n.line}</p>
+    </article>
+  );
+}
+
 export default function PipelinePage() {
   return (
     <>
@@ -355,6 +471,23 @@ export default function PipelinePage() {
         <div className="grid gap-3 sm:grid-cols-2">
           {NARRATIVES.map((n) => (
             <NarrativeCard key={n.name} n={n} />
+          ))}
+        </div>
+      </section>
+
+      <section className="mt-8">
+        <div className="mb-1 text-[11px] font-medium uppercase tracking-widest text-gray-500">
+          {COPY.pipeline.outsideTitle}
+        </div>
+        <p className="mt-0 mb-2 text-[11px] leading-snug text-gray-500">
+          {COPY.pipeline.outsideCaption}
+        </p>
+        <p className="mt-0 mb-3 text-[11px] italic leading-snug text-gray-500">
+          {COPY.pipeline.outsideDeadlineNote}
+        </p>
+        <div className="grid gap-3 sm:grid-cols-2">
+          {OUTSIDE.map((n) => (
+            <OutsideCard key={n.name} n={n} />
           ))}
         </div>
       </section>

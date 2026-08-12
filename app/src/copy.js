@@ -159,5 +159,18 @@ export const COPY = {
       "Every current Red Sox contributor with a Portland–Worcester line on their card. " +
       "The dot chart under each name is the same three doors from the funnel above.",
     stepShort: { seadogs: "SEA", woosox: "WOO", redsox: "BOS" },
+
+    outsideTitle: "From outside the org",
+    outsideCaption:
+      "The other lane onto the roster: signed off the free-agent market, acquired in a trade, " +
+      "or plucked from another system's Rule 5 draft. They never wore a Sea Dogs or WooSox uniform.",
+    outsideDeadlineNote:
+      "The 2026 deadline pickups — Mead, Rutschman, Rogers and White — each have their own tab in the nav above.",
+    routeLabels: {
+      trade: "TRADE",
+      fa: "FREE AGENT",
+      rule5: "RULE 5",
+      intl: "INT'L POSTING",
+    },
   },
 };
