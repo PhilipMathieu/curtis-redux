@@ -1,374 +1,555 @@
+import { useState } from "react";
 import { COPY } from "../copy.js";
 
-// Ordered, verifiable paths for current-team contributors. Years are the
-// season(s) each player appeared at that affiliate at any point (per
-// MiLB.com and public reporting); the goal is the shape of the road, not
-// a game-log audit.
-const NARRATIVES = [
+// Every player on the 2026 Red Sox roster the site tells a story about,
+// unified into one shape: source lane, stops that go through the
+// Portland/Worcester pipeline (if any), and a compact career timeline of
+// year → level/team stops.
+//
+// Timeline `kind` drives the marker color on the card:
+//   draft  — draft pick or intl signing (dashed)
+//   milb   — a minor-league stop (rookie/A/A+/AA/AAA)
+//   npb    — Japanese/foreign pro
+//   mlbOther — MLB with another org
+//   mlbBos — MLB Boston
+//   event  — a transaction (trade / FA sign / Rule 5)
+const PLAYERS = [
   {
     name: "Roman Anthony",
     pos: "OF",
-    signed: "2022 draft, 2nd rd",
-    path: { seadogs: "2024", woosox: "2024–25", redsox: "2025" },
-    line:
-      "84 games in Portland (.269/.367/.489, 15 HR) at age 20, then never looked back — " +
-      "Worcester by the same summer, Boston by the next.",
+    lane: "pipeline",
+    stops: ["seadogs", "woosox", "redsox"],
+    from: "2022 draft, 2nd rd",
+    line: "84 games in Portland (.269/.367/.489) at 20, then Worcester by summer, Boston by the next season.",
+    timeline: [
+      { year: "2022", label: "Drafted by BOS (2nd rd)", kind: "draft" },
+      { year: "2023", label: "A+ Greenville", kind: "milb" },
+      { year: "2024", label: "AA Portland → AAA Worcester", kind: "milb" },
+      { year: "2025", label: "MLB debut, Boston", kind: "mlbBos" },
+      { year: "2026", label: "MLB Boston", kind: "mlbBos" },
+    ],
   },
   {
     name: "Marcelo Mayer",
-    pos: "SS/3B",
-    signed: "2021 draft, 1st rd",
-    path: { seadogs: "2023–24", woosox: "2024–25", redsox: "2025" },
-    line:
-      "Doubled in his first Sea Dogs at-bat of 2024, hit .307 through 77 AA games, " +
-      "answered every follow-up level, debuted in Boston that same season.",
+    pos: "SS / 3B",
+    lane: "pipeline",
+    stops: ["seadogs", "woosox", "redsox"],
+    from: "2021 draft, 1st rd",
+    line: "Doubled in his first Sea Dogs at-bat of '24, hit .307 through 77 AA games, up in Boston the same season.",
+    timeline: [
+      { year: "2021", label: "Drafted by BOS (1st rd, #4)", kind: "draft" },
+      { year: "2022", label: "A / A+", kind: "milb" },
+      { year: "2023", label: "AA Portland", kind: "milb" },
+      { year: "2024", label: "AA Portland → AAA Worcester", kind: "milb" },
+      { year: "2025", label: "MLB debut, Boston", kind: "mlbBos" },
+      { year: "2026", label: "MLB Boston", kind: "mlbBos" },
+    ],
   },
   {
     name: "Kristian Campbell",
-    pos: "2B/OF",
-    signed: "2023 draft, 4th rd",
-    path: { seadogs: "2024", woosox: "2024", redsox: "2025" },
-    line:
-      "Cleared all three affiliates inside a calendar year — the kind of rise the funnel " +
-      "below is drawn to make you appreciate.",
+    pos: "2B / OF",
+    lane: "pipeline",
+    stops: ["seadogs", "woosox", "redsox"],
+    from: "2023 draft, 4th rd",
+    line: "Cleared all three affiliates inside a calendar year — the rocket the funnel is drawn to make you appreciate.",
+    timeline: [
+      { year: "2023", label: "Drafted by BOS (4th rd)", kind: "draft" },
+      { year: "2024", label: "A+ → AA → AAA", kind: "milb" },
+      { year: "2025", label: "MLB debut, Boston", kind: "mlbBos" },
+      { year: "2026", label: "MLB Boston", kind: "mlbBos" },
+    ],
   },
   {
     name: "Ceddanne Rafaela",
-    pos: "OF/SS",
-    signed: "2017 intl signing",
-    path: { seadogs: "2022–23", woosox: "2023", redsox: "2023" },
-    line:
-      "AA All-Star in 2022, .302/.349/.520 between Portland and Worcester in 2023, " +
-      "up in Boston that August playing center, short and second in the same week.",
+    pos: "OF / SS",
+    lane: "pipeline",
+    stops: ["seadogs", "woosox", "redsox"],
+    from: "2017 int'l signing",
+    line: "AA All-Star in '22, .302/.349/.520 between Portland and Worcester in '23, in Boston that August at three positions.",
+    timeline: [
+      { year: "2017", label: "Signed intl (Curaçao)", kind: "draft" },
+      { year: "2019", label: "DSL / GCL", kind: "milb" },
+      { year: "2021", label: "A Salem", kind: "milb" },
+      { year: "2022", label: "A+ / AA Portland", kind: "milb" },
+      { year: "2023", label: "AAA Worcester → MLB Boston", kind: "mlbBos" },
+      { year: "2024–26", label: "MLB Boston", kind: "mlbBos" },
+    ],
   },
   {
     name: "Wilyer Abreu",
     pos: "OF",
-    signed: "traded from HOU, 2022",
-    path: { seadogs: "2022", woosox: "2023", redsox: "2023" },
-    line:
-      "40 Sea Dogs games after the trade, an IL All-Star bat in Worcester the next year, " +
-      "called up August 22 and hit .316 the rest of the way.",
+    lane: "trade",
+    stops: ["seadogs", "woosox", "redsox"],
+    from: "trade from HOU, 2022",
+    line: "40 Sea Dogs games after the trade, IL All-Star bat in Worcester, called up Aug 22 '23 and hit .316 the rest of the way.",
+    timeline: [
+      { year: "2015", label: "Signed intl by HOU", kind: "draft" },
+      { year: "2017–21", label: "HOU minor leagues", kind: "milb" },
+      { year: "2022", label: "HOU AA → traded to BOS AA Portland", kind: "event" },
+      { year: "2023", label: "AAA Worcester → MLB Boston (Aug 22)", kind: "mlbBos" },
+      { year: "2024–26", label: "MLB Boston", kind: "mlbBos" },
+    ],
   },
   {
     name: "Jarren Duran",
     pos: "OF",
-    signed: "2018 draft, 7th rd",
-    path: { seadogs: "2019", woosox: "2021", redsox: "2021" },
-    line:
-      "The prototype for this decade's version of the pipeline — Portland late 2019, " +
-      "Worcester's first summer of existence, Boston that July.",
+    lane: "pipeline",
+    stops: ["seadogs", "woosox", "redsox"],
+    from: "2018 draft, 7th rd",
+    line: "Prototype for this decade of the pipeline — Portland late '19, Worcester's first summer, Boston that July.",
+    timeline: [
+      { year: "2018", label: "Drafted by BOS (7th rd)", kind: "draft" },
+      { year: "2019", label: "A+ / AA Portland", kind: "milb" },
+      { year: "2021", label: "AAA Worcester → MLB Boston (July)", kind: "mlbBos" },
+      { year: "2022–26", label: "MLB Boston", kind: "mlbBos" },
+    ],
   },
   {
     name: "Brayan Bello",
     pos: "RHP",
-    signed: "2017 intl signing",
-    path: { seadogs: "2021", woosox: "2022", redsox: "2022" },
-    line:
-      "Punched out 116 Sea Dogs hitters in 90 innings, moved to Worcester on his 23rd birthday " +
-      "week, was starting at Fenway inside two months.",
+    lane: "pipeline",
+    stops: ["seadogs", "woosox", "redsox"],
+    from: "2017 int'l signing",
+    line: "Punched out 116 Sea Dogs hitters in 90 innings, moved to Worcester on his 23rd-birthday week, starting at Fenway inside two months.",
+    timeline: [
+      { year: "2017", label: "Signed intl (DR)", kind: "draft" },
+      { year: "2018–20", label: "DSL / A", kind: "milb" },
+      { year: "2021", label: "AA Portland", kind: "milb" },
+      { year: "2022", label: "AAA Worcester → MLB Boston", kind: "mlbBos" },
+      { year: "2023–26", label: "MLB Boston", kind: "mlbBos" },
+    ],
   },
   {
     name: "Connor Wong",
     pos: "C",
-    signed: "traded from LAD, 2020",
-    path: { seadogs: "—", woosox: "2021–22", redsox: "2022" },
-    line:
-      "The Mookie Betts trade's quiet keeper — jumped Portland entirely, caught two full " +
-      "Worcester seasons, has been the depth catcher in Boston ever since.",
+    lane: "trade",
+    stops: ["woosox", "redsox"],
+    from: "trade from LAD, 2020 (Mookie Betts deal)",
+    line: "The Betts trade's quiet keeper — skipped Portland, caught two full Worcester seasons, has been Boston's depth catcher since '22.",
+    timeline: [
+      { year: "2017", label: "Drafted by LAD (3rd rd)", kind: "draft" },
+      { year: "2018–19", label: "LAD system", kind: "milb" },
+      { year: "2020", label: "Traded to BOS in Mookie Betts deal", kind: "event" },
+      { year: "2021–22", label: "AAA Worcester → MLB debut", kind: "mlbBos" },
+      { year: "2023–26", label: "MLB Boston", kind: "mlbBos" },
+    ],
   },
-];
-
-// Everyone on the current MLB roster who arrived from outside the org — no
-// Portland or Worcester line on their card. Sources for each are the linked
-// reports in the PR description; dates are month/year of the move to Boston.
-const OUTSIDE = [
-  // Winter trades — the rotation this team was built around.
+  // ── Outside the org ─────────────────────────────────────────────────
   {
     name: "Garrett Crochet",
     pos: "LHP",
-    route: "trade",
-    from: "from Chicago (AL) — Dec 2024",
-    line:
-      "For Teel, Montgomery, Meidroth and Wikelman Gonzalez — the biggest single deal " +
-      "of the winter, and the ace this rotation was built around.",
+    lane: "trade",
+    stops: ["redsox"],
+    from: "trade from CHW, Dec 2024",
+    line: "For Teel, Montgomery, Meidroth and Wikelman Gonzalez — the ace this rotation was built around.",
+    timeline: [
+      { year: "2020", label: "Drafted by CHW (1st rd, #11)", kind: "draft" },
+      { year: "2020–24", label: "MLB Chicago (AL)", kind: "mlbOther" },
+      { year: "2024 Dec", label: "Traded to BOS", kind: "event" },
+      { year: "2025–26", label: "MLB Boston", kind: "mlbBos" },
+    ],
   },
   {
     name: "Sonny Gray",
     pos: "RHP",
-    route: "trade",
-    from: "from St. Louis — Nov 2025",
-    line:
-      "For Richard Fitts and Brandon Clarke. Three-time All-Star, Cy Young runner-up in 2023, " +
-      "slotted in behind Crochet.",
+    lane: "trade",
+    stops: ["redsox"],
+    from: "trade from STL, Nov 2025",
+    line: "For Richard Fitts and Brandon Clarke. Three-time All-Star, Cy Young runner-up in '23.",
+    timeline: [
+      { year: "2011", label: "Drafted by OAK (1st rd)", kind: "draft" },
+      { year: "2013–17", label: "MLB Oakland", kind: "mlbOther" },
+      { year: "2017–19", label: "MLB New York (AL)", kind: "mlbOther" },
+      { year: "2019–22", label: "MLB Cincinnati", kind: "mlbOther" },
+      { year: "2023", label: "MLB Minnesota — AL Cy Young runner-up", kind: "mlbOther" },
+      { year: "2024–25", label: "MLB St. Louis", kind: "mlbOther" },
+      { year: "2025 Nov", label: "Traded to BOS", kind: "event" },
+      { year: "2026", label: "MLB Boston", kind: "mlbBos" },
+    ],
   },
   {
     name: "Willson Contreras",
     pos: "1B / DH",
-    route: "trade",
-    from: "from St. Louis — winter 2025–26",
-    line:
-      "Cardinals-to-Boston in a separate deal (Hunter Dobbins the other way) that gave " +
-      "the middle of the order a legit veteran bat.",
+    lane: "trade",
+    stops: ["redsox"],
+    from: "trade from STL, winter 2025–26",
+    line: "Cardinals-to-Boston in a separate deal (Hunter Dobbins the other way) — a legit veteran bat for the middle of the order.",
+    timeline: [
+      { year: "2009", label: "Signed intl by CHC", kind: "draft" },
+      { year: "2016–22", label: "MLB Chicago (NL)", kind: "mlbOther" },
+      { year: "2023–25", label: "MLB St. Louis", kind: "mlbOther" },
+      { year: "winter '25–26", label: "Traded to BOS", kind: "event" },
+      { year: "2026", label: "MLB Boston", kind: "mlbBos" },
+    ],
   },
   {
     name: "Johan Oviedo",
     pos: "RHP",
-    route: "trade",
-    from: "acquired winter 2025–26",
-    line: "One of the three rotation moves alongside Gray and Suárez; back-end depth after Tommy John recovery.",
+    lane: "trade",
+    stops: ["redsox"],
+    from: "trade winter 2025–26",
+    line: "One of the three rotation moves alongside Gray and Suárez — back-end depth after Tommy John recovery.",
+    timeline: [
+      { year: "2016", label: "Signed intl by STL", kind: "draft" },
+      { year: "2020–22", label: "MLB St. Louis", kind: "mlbOther" },
+      { year: "2023", label: "MLB Pittsburgh", kind: "mlbOther" },
+      { year: "2024–25", label: "Tommy John rehab", kind: "milb" },
+      { year: "winter '25–26", label: "Acquired by BOS", kind: "event" },
+      { year: "2026", label: "MLB Boston", kind: "mlbBos" },
+    ],
   },
-  // Free-agent bats and arms.
   {
     name: "Ranger Suárez",
     pos: "LHP",
-    route: "fa",
+    lane: "fa",
+    stops: ["redsox"],
     from: "5 yr / $130M — Jan 2026",
-    line:
-      "Eight years in Philadelphia, then Boston's biggest free-agent pitching splash of the winter. " +
-      "12–8, 3.20 ERA in his last Phillies season.",
+    line: "Eight years in Philadelphia, then Boston's biggest FA pitching splash of the winter. 12–8, 3.20 ERA the year before.",
+    timeline: [
+      { year: "2012", label: "Signed intl by PHI", kind: "draft" },
+      { year: "2018–25", label: "MLB Philadelphia", kind: "mlbOther" },
+      { year: "2026 Jan", label: "Signed 5y/$130M with BOS", kind: "event" },
+      { year: "2026", label: "MLB Boston", kind: "mlbBos" },
+    ],
   },
   {
     name: "Trevor Story",
     pos: "SS",
-    route: "fa",
+    lane: "fa",
+    stops: ["redsox"],
     from: "6 yr / $140M — Mar 2022",
-    line:
-      "The Chaim Bloom-era gamble that finally started paying full postseason dividends in 2026 — " +
-      "still holding down the left side of the infield.",
+    line: "The Chaim Bloom-era gamble that finally started paying full dividends in '26 — still on the left side of the infield.",
+    timeline: [
+      { year: "2011", label: "Drafted by COL (1st rd)", kind: "draft" },
+      { year: "2016–21", label: "MLB Colorado", kind: "mlbOther" },
+      { year: "2022 Mar", label: "Signed 6y/$140M with BOS", kind: "event" },
+      { year: "2022–26", label: "MLB Boston", kind: "mlbBos" },
+    ],
   },
   {
     name: "Aroldis Chapman",
     pos: "LHP",
-    route: "fa",
+    lane: "fa",
+    stops: ["redsox"],
     from: "1 yr / $10.75M — Dec 2024, extended '25",
-    line:
-      "Signed cheap as a bounce-back, ran a 1.02 ERA and 27 saves in his first season, " +
-      "re-upped through 2026 in-season.",
+    line: "Signed cheap as a bounce-back, ran a 1.02 ERA and 27 saves in his first season, re-upped through '26.",
+    timeline: [
+      { year: "2009", label: "Defected from Cuba", kind: "event" },
+      { year: "2010", label: "Signed by CIN", kind: "draft" },
+      { year: "2010–16", label: "MLB Cincinnati / New York (AL)", kind: "mlbOther" },
+      { year: "2017–22", label: "MLB NYY / Chicago (NL)", kind: "mlbOther" },
+      { year: "2023–24", label: "MLB KC / TEX / PIT", kind: "mlbOther" },
+      { year: "2024 Dec", label: "Signed 1y with BOS", kind: "event" },
+      { year: "2025", label: "1.02 ERA, extended in-season", kind: "mlbBos" },
+      { year: "2026", label: "MLB Boston", kind: "mlbBos" },
+    ],
   },
   {
     name: "Isiah Kiner-Falefa",
     pos: "IF / OF",
-    route: "fa",
+    lane: "fa",
+    stops: ["redsox"],
     from: "1 yr / $6M — Feb 2026",
-    line:
-      "Late-winter depth signing: shortstop, third, second and outfield all in the same week if the day calls for it.",
+    line: "Late-winter depth signing: SS, 3B, 2B and OF all in the same week if the day calls for it.",
+    timeline: [
+      { year: "2013", label: "Drafted by TEX", kind: "draft" },
+      { year: "2018–21", label: "MLB Texas", kind: "mlbOther" },
+      { year: "2022–23", label: "MLB New York (AL)", kind: "mlbOther" },
+      { year: "2024", label: "MLB Toronto → Pittsburgh", kind: "mlbOther" },
+      { year: "2025", label: "MLB Pittsburgh", kind: "mlbOther" },
+      { year: "2026 Feb", label: "Signed 1y/$6M with BOS", kind: "event" },
+      { year: "2026", label: "MLB Boston", kind: "mlbBos" },
+    ],
   },
   {
     name: "Masataka Yoshida",
     pos: "OF / DH",
-    route: "intl",
+    lane: "intl",
+    stops: ["redsox"],
     from: "posted from NPB — Dec 2022",
-    line:
-      "Five-year, $90M contract straight out of the Orix Buffaloes — the org's first big move " +
-      "into the Japanese posting market since Daisuke.",
+    line: "5 yr / $90M straight out of the Orix Buffaloes — the org's first big move into the Japanese posting market since Daisuke.",
+    timeline: [
+      { year: "2015", label: "NPB draft, Orix Buffaloes (1st rd)", kind: "draft" },
+      { year: "2016–22", label: "NPB Orix", kind: "npb" },
+      { year: "2022 Dec", label: "Posted, signed 5y/$90M with BOS", kind: "event" },
+      { year: "2023–26", label: "MLB Boston", kind: "mlbBos" },
+    ],
   },
-  // Rule 5.
   {
     name: "Justin Slaten",
     pos: "RHP",
-    route: "rule5",
-    from: "Rule 5 via Mets — Dec 2023",
-    line:
-      "Selected by New York out of Texas's system, then flipped to Boston for Ryan Ammons and cash. " +
-      "Stuck the whole rookie season (2.93 ERA) — the second coming of the Whitlock trick.",
+    lane: "rule5",
+    stops: ["redsox"],
+    from: "Rule 5 via NYM, Dec 2023",
+    line: "Selected by New York out of TEX, then flipped to Boston for Ryan Ammons and cash. 2.93 rookie ERA — the second coming of the Whitlock trick.",
+    timeline: [
+      { year: "2019", label: "Drafted by TEX (3rd rd)", kind: "draft" },
+      { year: "2019–23", label: "TEX system → AA / AAA in '23", kind: "milb" },
+      { year: "2023 Dec", label: "Rule 5 by NYM → traded to BOS", kind: "event" },
+      { year: "2024–26", label: "MLB Boston", kind: "mlbBos" },
+    ],
   },
 ];
 
-// Aggregate cohort widths — illustrative shape, not a per-year Boston audit.
-// Chosen so the funnel reads honestly at a glance: about half of AA gets to
-// AAA, about a third of AAA gets an MLB debut, less than half of debuts stick.
-const COHORT = { seadogs: 100, woosox: 45, redsox: 18, stick: 7 };
-
-// Layout constants for the SVG funnel. Three fixed horizontal zones stacked
-// top-to-bottom so labels never collide with the ribbons.
-const W = 720;
-const HEAD_H = 66; // column name (y≈16), subtitle (y≈32), flow labels (y≈54)
-const BAND_H_MAX = 180; // vertical space the largest cohort band fills
-const FOOT_H = 92; // cohort counts (y≈+22), off-ramp labels (two lines, y≈+50/+62)
-const H = HEAD_H + BAND_H_MAX + FOOT_H;
-const PAD_X = 24;
-const COL_W = 96;
-const GAP_X = (W - 2 * PAD_X - 4 * COL_W) / 3;
-const BAND_TOP = HEAD_H;
-// Top-aligned bands so a stayer ribbon shares a flat top edge with the next
-// band and the funnel visually narrows downward, not toward a centered pinch.
-const SCALE = BAND_H_MAX / COHORT.seadogs;
-const bandH = (n) => n * SCALE;
-
-// Column x-positions (left edge of each cohort band).
-const COLS = [
-  { key: "seadogs", x: PAD_X },
-  { key: "woosox", x: PAD_X + COL_W + GAP_X },
-  { key: "redsox", x: PAD_X + 2 * (COL_W + GAP_X) },
-  { key: "stick", x: PAD_X + 3 * (COL_W + GAP_X) },
+// The five source lanes in stack order (top → bottom on the left column).
+const LANES = [
+  { key: "pipeline", label: "Portland Sea Dogs", subtitle: "PIPELINE (AA)" },
+  { key: "trade", label: "Trade" },
+  { key: "fa", label: "Free agent" },
+  { key: "intl", label: "Int'l posting" },
+  { key: "rule5", label: "Rule 5" },
 ];
 
-const COL_X = Object.fromEntries(COLS.map((c) => [c.key, c.x]));
+// Sankey layout — left column carries stacked source lanes; the middle
+// carries the WooSox stop only pipeline (and trade+dev, like Wong) touch;
+// the right column is the Red Sox terminus everyone converges on.
+const W = 820;
+const COL_W = 130;
+const PAD_X = 20;
+const X_SEA = PAD_X;
+const X_BOS = W - PAD_X - COL_W;
+const X_WOO = X_SEA + COL_W + (X_BOS - X_SEA - 2 * COL_W) / 2;
 
-// Colors that stay in the site's palette.
-const FILL_STAY = "#CE112D"; // primary — the players who advance
-const FILL_OFFRAMP = "#E5E5E5"; // gray-200 — attrition
+const ROW_H = 22; // vertical space per player-strand
+const LANE_GAP = 14;
+const TOP_PAD = 44; // room for column headers
 
-// A trapezoid ribbon between two column edges, curved on top and bottom so
-// the whole funnel reads as one continuous stream.
-function ribbonPath(x1, y1a, y1b, x2, y2a, y2b) {
-  const mid = (x1 + COL_W + x2) / 2;
-  return [
-    `M ${x1 + COL_W} ${y1a}`,
-    `C ${mid} ${y1a}, ${mid} ${y2a}, ${x2} ${y2a}`,
-    `L ${x2} ${y2b}`,
-    `C ${mid} ${y2b}, ${mid} ${y1b}, ${x1 + COL_W} ${y1b}`,
-    "Z",
-  ].join(" ");
+// Precompute per-lane and per-player y positions.
+const laneOrder = LANES.map((l) => l.key);
+const playersByLane = Object.fromEntries(laneOrder.map((k) => [k, PLAYERS.filter((p) => p.lane === k)]));
+
+const layout = {};
+{
+  let y = TOP_PAD;
+  for (const laneKey of laneOrder) {
+    const list = playersByLane[laneKey];
+    const startY = y;
+    list.forEach((p, i) => {
+      layout[p.name] = { laneKey, y: startY + i * ROW_H + ROW_H / 2 };
+    });
+    y = startY + list.length * ROW_H + LANE_GAP;
+  }
+}
+const H = (() => {
+  const last = Object.values(layout).at(-1);
+  return (last?.y ?? TOP_PAD) + ROW_H + 24;
+})();
+
+// Boston column is centered vertically so all strands converge nicely.
+const bosCenterY = TOP_PAD + (H - TOP_PAD - 24) / 2;
+const bosH = PLAYERS.length * ROW_H;
+const bosTop = bosCenterY - bosH / 2;
+PLAYERS.forEach((p, i) => {
+  layout[p.name].bosY = bosTop + i * ROW_H + ROW_H / 2;
+});
+
+// WooSox column: only for players whose stops include "woosox". Position
+// them in that column at the same relative slot they land at in BOS.
+const wooPlayers = PLAYERS.filter((p) => p.stops.includes("woosox"));
+const wooH = wooPlayers.length * ROW_H;
+const wooTop = bosCenterY - wooH / 2;
+wooPlayers.forEach((p, i) => {
+  layout[p.name].wooY = wooTop + i * ROW_H + ROW_H / 2;
+});
+
+// Lane box bounds (for drawing the source pills on the left column).
+const laneBoxes = laneOrder.map((k) => {
+  const list = playersByLane[k];
+  const ys = list.map((p) => layout[p.name].y);
+  const top = Math.min(...ys) - ROW_H / 2;
+  const bot = Math.max(...ys) + ROW_H / 2;
+  return { key: k, top, bot };
+});
+
+// One S-curved path per player, source → (WooSox?) → Red Sox.
+function strandPath(p) {
+  const l = layout[p.name];
+  const y0 = l.y;
+  const yB = l.bosY;
+  const points = [{ x: X_SEA + COL_W, y: y0 }];
+  if (p.stops.includes("woosox")) {
+    points.push({ x: X_WOO, y: l.wooY }, { x: X_WOO + COL_W, y: l.wooY });
+  }
+  points.push({ x: X_BOS, y: yB });
+  // Cubic curves between successive points for a smooth flow.
+  let d = `M ${points[0].x} ${points[0].y}`;
+  for (let i = 1; i < points.length; i++) {
+    const a = points[i - 1];
+    const b = points[i];
+    if (a.y === b.y) {
+      d += ` L ${b.x} ${b.y}`;
+    } else {
+      const mx = (a.x + b.x) / 2;
+      d += ` C ${mx} ${a.y}, ${mx} ${b.y}, ${b.x} ${b.y}`;
+    }
+  }
+  return d;
 }
 
-function Funnel() {
-  // Top-aligned cohort bands: every band starts at BAND_TOP and drops to
-  // BAND_TOP + bandH(cohort). Bigger cohorts are taller, so the funnel
-  // visibly steps down left-to-right.
-  const bands = Object.fromEntries(
-    Object.entries(COHORT).map(([k, n]) => {
-      const h = bandH(n);
-      return [k, { top: BAND_TOP, bot: BAND_TOP + h, h }];
-    }),
-  );
+const LANE_FILL = {
+  pipeline: "#CE112D",
+  trade: "#1580B0",
+  fa: "#B8860B",
+  intl: "#7A5197",
+  rule5: "#157A4A",
+};
 
-  const pairs = [
-    ["seadogs", "woosox", COPY.pipeline.flowLabels.seadogsToWoosox, COPY.pipeline.offRampLabels.seadogs],
-    ["woosox", "redsox", COPY.pipeline.flowLabels.woosoxToRedsox, COPY.pipeline.offRampLabels.woosox],
-    ["redsox", "stick", COPY.pipeline.flowLabels.redsoxToStick, COPY.pipeline.offRampLabels.redsox],
-  ];
+// Kind → dot color for timeline entries.
+const KIND_COLOR = {
+  draft: "#CCCCCC",
+  milb: "#B8860B",
+  npb: "#7A5197",
+  mlbOther: "#666666",
+  mlbBos: "#CE112D",
+  event: "#1580B0",
+};
 
-  const offRampLandY = BAND_TOP + BAND_H_MAX + 6; // just below the deepest band
-  const flowLabelY = HEAD_H - 14; // in the header strip, above the funnel
-  const cohortNumY = BAND_TOP + BAND_H_MAX + 22; // below the bands, aligned across
-  const offRampTextY = BAND_TOP + BAND_H_MAX + 52; // one row further down
-
+function Sankey({ hovered, setHovered }) {
   return (
     <svg
       viewBox={`0 0 ${W} ${H}`}
       className="w-full"
       role="img"
-      aria-label="Funnel from Portland Sea Dogs to Worcester Red Sox to Boston Red Sox"
+      aria-label="Roster Sankey: five source lanes converging on Boston, one strand per named player"
     >
       {/* Column headers */}
-      {COLS.map(({ key, x }) => (
-        <g key={`hdr-${key}`}>
-          <text
-            x={x + COL_W / 2}
-            y={18}
-            textAnchor="middle"
-            className="fill-gray-800"
-            style={{ fontSize: 12, fontWeight: 700 }}
-          >
-            {COPY.pipeline.columnLabels[key]}
-          </text>
-          <text
-            x={x + COL_W / 2}
-            y={34}
-            textAnchor="middle"
-            className="fill-gray-500"
-            style={{ fontSize: 10, letterSpacing: 1.4 }}
-          >
-            {COPY.pipeline.columnLabels[`${key}Sub`].toUpperCase()}
-          </text>
-        </g>
-      ))}
+      <text x={X_SEA + COL_W / 2} y={20} textAnchor="middle" className="fill-gray-800" style={{ fontSize: 12, fontWeight: 700 }}>
+        Source
+      </text>
+      <text x={X_SEA + COL_W / 2} y={34} textAnchor="middle" className="fill-gray-500" style={{ fontSize: 10, letterSpacing: 1.4 }}>
+        HOW THEY ENTERED
+      </text>
+      <text x={X_WOO + COL_W / 2} y={20} textAnchor="middle" className="fill-gray-800" style={{ fontSize: 12, fontWeight: 700 }}>
+        Worcester Red Sox
+      </text>
+      <text x={X_WOO + COL_W / 2} y={34} textAnchor="middle" className="fill-gray-500" style={{ fontSize: 10, letterSpacing: 1.4 }}>
+        TRIPLE-A DEV STOP
+      </text>
+      <text x={X_BOS + COL_W / 2} y={20} textAnchor="middle" className="fill-gray-800" style={{ fontSize: 12, fontWeight: 700 }}>
+        Boston Red Sox
+      </text>
+      <text x={X_BOS + COL_W / 2} y={34} textAnchor="middle" className="fill-gray-500" style={{ fontSize: 10, letterSpacing: 1.4 }}>
+        2026 ACTIVE ROSTER
+      </text>
 
-      {/* Off-ramps: rendered before stayers so the primary ribbon sits on top.
-          Each drops from the source band's bottom edge down to a thin sliver
-          near the funnel floor — the visual weight of players who don't advance. */}
-      {pairs.map(([from, to]) => {
-        const src = bands[from];
-        const dst = bands[to];
-        const x1 = COL_X[from];
-        const x2 = COL_X[to];
-        const stayerBotOnSrc = src.top + dst.h;
-        return (
-          <path
-            key={`off-${from}`}
-            d={ribbonPath(x1, stayerBotOnSrc, src.bot, x2, offRampLandY, offRampLandY + 0.5)}
-            fill={FILL_OFFRAMP}
-            opacity="0.85"
-          />
-        );
-      })}
-
-      {/* Stayer ribbons — top-flat, bottom drops to match destination band. */}
-      {pairs.map(([from, to]) => {
-        const src = bands[from];
-        const dst = bands[to];
-        const x1 = COL_X[from];
-        const x2 = COL_X[to];
-        return (
-          <path
-            key={`stay-${from}`}
-            d={ribbonPath(x1, src.top, src.top + dst.h, x2, dst.top, dst.bot)}
-            fill={FILL_STAY}
-            opacity="0.55"
-          />
-        );
-      })}
-
-      {/* Flow labels in the header strip, centered between columns. */}
-      {pairs.map(([from, to, label]) => {
-        const x1 = COL_X[from];
-        const x2 = COL_X[to];
-        return (
-          <text
-            key={`flow-${from}`}
-            x={(x1 + COL_W + x2) / 2}
-            y={flowLabelY}
-            textAnchor="middle"
-            className="fill-gray-700"
-            style={{ fontSize: 11, fontWeight: 600 }}
-          >
-            {label}
-          </text>
-        );
-      })}
-
-      {/* Solid cohort bands over the ribbons so the columns read as anchors. */}
-      {COLS.map(({ key, x }) => {
-        const b = bands[key];
+      {/* Source lane pills */}
+      {laneBoxes.map(({ key, top, bot }) => {
+        const meta = LANES.find((l) => l.key === key);
         return (
           <g key={key}>
-            <rect x={x} y={b.top} width={COL_W} height={b.h} fill={FILL_STAY} opacity="0.95" rx="2" />
+            <rect
+              x={X_SEA}
+              y={top}
+              width={COL_W}
+              height={bot - top}
+              fill={LANE_FILL[key]}
+              opacity="0.18"
+              rx="4"
+            />
             <text
-              x={x + COL_W / 2}
-              y={cohortNumY}
-              textAnchor="middle"
+              x={X_SEA + 10}
+              y={top + 14}
               className="fill-gray-800"
-              style={{ fontSize: 15, fontWeight: 700, fontFamily: "ui-monospace, monospace" }}
+              style={{ fontSize: 11, fontWeight: 700 }}
             >
-              {COHORT[key]}
+              {meta.label}
+            </text>
+            {meta.subtitle && (
+              <text
+                x={X_SEA + 10}
+                y={top + 26}
+                className="fill-gray-500"
+                style={{ fontSize: 9, letterSpacing: 1.2 }}
+              >
+                {meta.subtitle}
+              </text>
+            )}
+            <text
+              x={X_SEA + COL_W - 10}
+              y={top + 14}
+              textAnchor="end"
+              className="fill-gray-600"
+              style={{ fontSize: 11, fontWeight: 700, fontFamily: "ui-monospace, monospace" }}
+            >
+              {playersByLane[key].length}
             </text>
           </g>
         );
       })}
 
-      {/* Off-ramp captions on their own row so the ribbons stay legible. Each
-          caption is a two-string array so tight column gaps still get to
-          carry a full sentence. */}
-      {pairs.map(([from, to, , lines]) => {
-        const x1 = COL_X[from];
-        const x2 = COL_X[to];
-        const cx = (x1 + COL_W + x2) / 2;
+      {/* Worcester stop pill (only pipeline + Wong pass through) */}
+      <rect x={X_WOO} y={wooTop - 8} width={COL_W} height={wooH + 16} fill="#CE112D" opacity="0.14" rx="4" />
+      <text x={X_WOO + 10} y={wooTop + 4} className="fill-gray-500" style={{ fontSize: 9, letterSpacing: 1.2 }}>
+        {wooPlayers.length} PASSED THROUGH
+      </text>
+
+      {/* Boston terminus pill */}
+      <rect x={X_BOS} y={bosTop - 8} width={COL_W} height={bosH + 16} fill="#CE112D" opacity="0.22" rx="4" />
+      <text x={X_BOS + 10} y={bosTop + 4} className="fill-gray-500" style={{ fontSize: 9, letterSpacing: 1.2 }}>
+        {PLAYERS.length} STRANDS IN
+      </text>
+
+      {/* Background strands (thin, colored by source lane) */}
+      {PLAYERS.map((p) => (
+        <path
+          key={`bg-${p.name}`}
+          d={strandPath(p)}
+          fill="none"
+          stroke={LANE_FILL[p.lane]}
+          strokeOpacity={hovered && hovered !== p.name ? 0.12 : 0.55}
+          strokeWidth={2}
+        />
+      ))}
+
+      {/* Hovered strand highlighted */}
+      {hovered &&
+        (() => {
+          const p = PLAYERS.find((x) => x.name === hovered);
+          return (
+            <path
+              d={strandPath(p)}
+              fill="none"
+              stroke={LANE_FILL[p.lane]}
+              strokeOpacity={1}
+              strokeWidth={4}
+            />
+          );
+        })()}
+
+      {/* Hit targets — one wide invisible path per strand for reliable hover.
+          Rendered last so they sit above the visible strands. Explicit
+          pointer-events="stroke" is required because a transparent stroke
+          would otherwise be ignored by the default visiblePainted rule. */}
+      {PLAYERS.map((p) => (
+        <path
+          key={`hit-${p.name}`}
+          d={strandPath(p)}
+          fill="none"
+          stroke="rgba(0,0,0,0)"
+          strokeWidth={ROW_H - 2}
+          pointerEvents="stroke"
+          onMouseEnter={() => setHovered(p.name)}
+          onFocus={() => setHovered(p.name)}
+          tabIndex={0}
+          aria-label={p.name}
+          style={{ cursor: "pointer", outline: "none" }}
+        />
+      ))}
+
+      {/* Small player-name chip at the Boston end of each strand, so the
+          diagram reads even without hovering. */}
+      {PLAYERS.map((p) => {
+        const yB = layout[p.name].bosY;
+        const on = hovered === p.name;
         return (
           <text
-            key={`offlbl-${from}`}
-            x={cx}
-            y={offRampTextY}
-            textAnchor="middle"
-            className="fill-gray-500"
-            style={{ fontSize: 10 }}
+            key={`lbl-${p.name}`}
+            x={X_BOS + 8}
+            y={yB + 3.5}
+            className={on ? "fill-gray-800" : "fill-gray-600"}
+            style={{ fontSize: 10, fontWeight: on ? 700 : 500, pointerEvents: "none" }}
           >
-            {lines.map((ln, i) => (
-              <tspan key={i} x={cx} dy={i === 0 ? 0 : 12}>
-                {ln}
-              </tspan>
-            ))}
+            {p.name}
           </text>
         );
       })}
@@ -376,71 +557,95 @@ function Funnel() {
   );
 }
 
-// A compact three-step path glyph — the same three doors from the funnel.
-function PathDots({ path }) {
-  const steps = ["seadogs", "woosox", "redsox"];
+function TimelineRow({ e }) {
   return (
-    <div className="flex flex-wrap items-center gap-1">
-      {steps.map((s, i) => {
-        const on = path[s] && path[s] !== "—";
-        return (
-          <div key={s} className="flex items-center gap-1">
-            <span
-              className={`inline-flex h-6 min-w-16 items-center justify-center rounded-sm px-1.5 font-mono text-[10px] font-semibold ${
-                on
-                  ? "bg-primary-500/10 text-primary-600"
-                  : "border border-dashed border-gray-300 text-gray-400"
-              }`}
-              title={COPY.pipeline.columnLabels[s]}
-            >
-              {COPY.pipeline.stepShort[s]} {on ? path[s] : "—"}
-            </span>
-            {i < steps.length - 1 && <span className="text-gray-400">→</span>}
-          </div>
-        );
-      })}
-    </div>
+    <li className="flex items-baseline gap-3 py-0.5">
+      <span
+        className="mt-1 inline-block h-2 w-2 shrink-0 rounded-full"
+        style={{ background: KIND_COLOR[e.kind] || "#CCCCCC" }}
+        aria-hidden="true"
+      />
+      <span className="w-24 shrink-0 font-mono text-[11px] text-gray-500">{e.year}</span>
+      <span className="text-[13px] leading-snug text-gray-700">{e.label}</span>
+    </li>
   );
 }
 
-function NarrativeCard({ n }) {
-  return (
-    <article className="rounded border border-gray-200 bg-white p-4 shadow-sm">
-      <header className="mb-2">
-        <div className="font-serif text-lg font-semibold text-gray-800">{n.name}</div>
-        <div className="text-[11px] uppercase tracking-wider text-gray-500">
-          {n.pos} · {n.signed}
-        </div>
-      </header>
-      <div className="mb-2">
-        <PathDots path={n.path} />
+function DetailCard({ p }) {
+  if (!p) {
+    return (
+      <div className="flex h-full min-h-40 items-center justify-center rounded border border-dashed border-gray-300 bg-white p-4 text-center text-[12px] text-gray-500">
+        Hover a strand to see one player's route and career timeline.
       </div>
-      <p className="mb-0 text-[13px] leading-snug text-gray-600">{n.line}</p>
-    </article>
-  );
-}
-
-// A card for a player who arrived from outside the org — the SEA→WOO→BOS
-// glyph is replaced with a single "route" chip (TRADE / FA / RULE 5 / INT'L).
-function OutsideCard({ n }) {
+    );
+  }
   return (
     <article className="rounded border border-gray-200 bg-white p-4 shadow-sm">
       <header className="mb-2 flex items-baseline justify-between gap-2">
         <div>
-          <div className="font-serif text-lg font-semibold text-gray-800">{n.name}</div>
-          <div className="text-[11px] uppercase tracking-wider text-gray-500">{n.pos}</div>
+          <div className="font-serif text-lg font-semibold text-gray-800">{p.name}</div>
+          <div className="text-[11px] uppercase tracking-wider text-gray-500">
+            {p.pos} · {p.from}
+          </div>
         </div>
-        <span className="rounded-sm bg-gray-200 px-2 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-wider text-gray-600">
-          {COPY.pipeline.routeLabels[n.route]}
+        <span
+          className="rounded-sm px-2 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-wider text-white"
+          style={{ background: LANE_FILL[p.lane] }}
+        >
+          {LANES.find((l) => l.key === p.lane).label}
         </span>
       </header>
-      <div className="mb-2 text-[11px] font-medium text-gray-500">→ {n.from}</div>
-      <p className="mb-0 text-[13px] leading-snug text-gray-600">{n.line}</p>
+      <p className="mb-3 text-[13px] leading-snug text-gray-600">{p.line}</p>
+      <ol className="m-0 list-none border-t border-gray-100 pt-2 pl-0">
+        {p.timeline.map((e, i) => (
+          <TimelineRow key={i} e={e} />
+        ))}
+      </ol>
     </article>
   );
 }
 
+// Compact aggregate funnel — the illustrative cohort ("100 → 45 → 18 → 7")
+// that sets the scene before the strand Sankey pulls in individual paths.
+function CohortStrip() {
+  const cells = [
+    { label: "Sea Dogs", sub: "AA cohort", value: 100 },
+    { label: "Worcester", sub: "AAA cohort", value: 45 },
+    { label: "Boston debut", sub: "MLB call-up", value: 18 },
+    { label: "Sticks in Boston", sub: "regular role", value: 7 },
+  ];
+  const max = cells[0].value;
+  return (
+    <div className="rounded border border-gray-200 bg-white p-3 shadow-sm">
+      <div className="mb-1 text-[11px] font-medium uppercase tracking-widest text-gray-500">
+        A typical cohort, three years out
+      </div>
+      <p className="mt-0 mb-2 text-[11px] leading-snug text-gray-500">
+        {COPY.pipeline.funnelCaption}
+      </p>
+      <div className="flex items-end gap-1">
+        {cells.map((c, i) => (
+          <div key={c.label} className="flex flex-1 flex-col items-center">
+            <div
+              className="w-full rounded-sm bg-primary-500"
+              style={{ height: `${(c.value / max) * 68}px`, opacity: 0.9 - i * 0.1 }}
+              title={`${c.value} of every 100`}
+            />
+            <div className="mt-1 font-mono text-[12px] font-semibold text-gray-800">{c.value}</div>
+            <div className="text-center text-[10px] font-medium uppercase tracking-wider text-gray-500">
+              {c.label}
+            </div>
+            <div className="text-center text-[9px] text-gray-500">{c.sub}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function PipelinePage() {
+  const [hovered, setHovered] = useState(null);
+  const hoveredPlayer = hovered ? PLAYERS.find((p) => p.name === hovered) : null;
   return (
     <>
       <header className="mb-5 border-b-2 border-gray-200 pb-4">
@@ -451,46 +656,27 @@ export default function PipelinePage() {
         <p className="mt-2 mb-0 text-gray-600">{COPY.pipeline.dek}</p>
       </header>
 
-      <section className="mb-6 rounded border border-gray-200 bg-white p-4 shadow-sm">
+      <div className="mb-5">
+        <CohortStrip />
+      </div>
+
+      <section
+        className="rounded border border-gray-200 bg-white p-4 shadow-sm"
+        onMouseLeave={() => setHovered(null)}
+      >
         <div className="text-[11px] font-medium uppercase tracking-widest text-gray-500">
-          {COPY.pipeline.funnelTitle}
+          Every current Red Sox contributor — one strand each
         </div>
         <p className="mt-1 mb-3 text-[11px] leading-snug text-gray-500">
-          {COPY.pipeline.funnelCaption}
+          Five source lanes converge on the 2026 active roster: the Portland–Worcester pipeline plus every
+          way a player arrives from outside the org. Hover a strand to see who it is and how they got here.
         </p>
-        <Funnel />
+        <Sankey hovered={hovered} setHovered={setHovered} />
       </section>
 
-      <section>
-        <div className="mb-1 text-[11px] font-medium uppercase tracking-widest text-gray-500">
-          {COPY.pipeline.narrativesTitle}
-        </div>
-        <p className="mt-0 mb-3 text-[11px] leading-snug text-gray-500">
-          {COPY.pipeline.narrativesCaption}
-        </p>
-        <div className="grid gap-3 sm:grid-cols-2">
-          {NARRATIVES.map((n) => (
-            <NarrativeCard key={n.name} n={n} />
-          ))}
-        </div>
-      </section>
-
-      <section className="mt-8">
-        <div className="mb-1 text-[11px] font-medium uppercase tracking-widest text-gray-500">
-          {COPY.pipeline.outsideTitle}
-        </div>
-        <p className="mt-0 mb-2 text-[11px] leading-snug text-gray-500">
-          {COPY.pipeline.outsideCaption}
-        </p>
-        <p className="mt-0 mb-3 text-[11px] italic leading-snug text-gray-500">
-          {COPY.pipeline.outsideDeadlineNote}
-        </p>
-        <div className="grid gap-3 sm:grid-cols-2">
-          {OUTSIDE.map((n) => (
-            <OutsideCard key={n.name} n={n} />
-          ))}
-        </div>
-      </section>
+      <div className="mt-4">
+        <DetailCard p={hoveredPlayer} />
+      </div>
 
       <p className="mt-6 border-t border-gray-200 pt-3 text-[11px] leading-relaxed text-gray-500">
         {COPY.pipeline.footnote}
